@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User as user
 # Create your models here.
 
 class Location(models.Model):
@@ -27,12 +28,20 @@ class Supplier(models.Model):
     contact_number = models.CharField(max_length=13)
     email = models.CharField(max_length=50)
 
+class UserType(models.Model):
+    name =  models.CharField(max_length=50)  
+    abbv =  models.CharField(max_length=13) 
+
+    def __str__(self):
+        return self.name
+
 class Employee(models.Model):
+    user = models.OneToOneField(user, on_delete=models.CASCADE, null=True, blank=True)
     firstname = models.CharField(max_length=20)
     lastname = models.CharField(max_length=20)
     email = models.CharField(max_length=50)
     contact_number = models.CharField(max_length=13)
-    employee_type = models.CharField(max_length=13) 
+    employee_type = models.ForeignKey(UserType, on_delete=models.CASCADE) 
     location = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
 
 class Item(models.Model):
@@ -72,6 +81,7 @@ class RequestOrders(models.Model):
     comment = models.CharField(max_length=50, null=True, blank=True)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
 
 class Orders(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
