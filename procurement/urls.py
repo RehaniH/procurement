@@ -19,6 +19,8 @@ from orders import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index , name= 'login_page'),
-    path('hi/', views.index, name= 'register_render'),
+    path('', views.index, name='login_page'),
+    path('hi/', views.index, name='register_render'),
+    path('rulelist/', views.Ruleslist.as_view(), name='rulelist'),
+
 ]
