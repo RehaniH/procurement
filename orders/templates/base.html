@@ -121,19 +121,125 @@
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
     <script>
+
+
       $( document ).ready(function() {
         console.log( "ready!" );
-    });
+      });
       $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var recipient = button.data('whatever') // Extract info from data-* attributes
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
         var modal = $(this)
-        modal.find('.modal-title').text('New message to ' + recipient)
-        modal.find('.modal-body input').val(recipient)
-      })
-    
+        modal.find('.modal-body #ruleid').val(recipient)
+      });
+
+      $('#exampleModal1').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-body #ruleid1').val(recipient)
+      });
+
+      $("[name='rule1Activate']").on('change', function(e){
+        e.preventDefault();
+      
+        var id = $(this).data("id");
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "rule1status" %}',
+          data: {
+              id: id
+          },
+          method: 'get',
+          error: function (e){
+            alert('error');
+          },
+          success: function (data){
+          if(data.is_taken==2){
+          console.log('deactivated');
+              setTimeout(function() {
+                  window.location.reload();
+              }, 1500);
+          }
+          else{
+            console.log('activated');
+
+          }
+          
+          }
+        }); 
+      });
+
+
+      $("[name='rule2Activate']").on('change', function(e){
+        e.preventDefault();
+      
+        var id = $(this).data("id");
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "rule2status" %}',
+          data: {
+              id: id
+          },
+          method: 'get',
+          error: function (e){
+            alert('error');
+          },
+          success: function (data){
+          if(data.is_taken==2){
+          console.log('deactivated');
+              setTimeout(function() {
+                  window.location.reload();
+              }, 1500);
+          }
+          else{
+            console.log('activated');
+
+          }
+          
+          }
+        }); 
+      });
+
+
+      $("[name='rule3Activate']").on('change', function(e){
+        e.preventDefault();
+      
+        var id = $(this).data("id");
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "rule3status" %}',
+          data: {
+              id: id
+          },
+          method: 'get',
+          error: function (e){
+            alert('error');
+          },
+          success: function (data){
+          if(data.is_taken==2){
+          console.log('deactivated');
+              setTimeout(function() {
+                  window.location.reload();
+              }, 1500);
+          }
+          else{
+            console.log('activated');
+
+          }
+          
+          }
+        }); 
+      });
+
+     
     </script>
 
   </body>

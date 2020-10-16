@@ -1,6 +1,7 @@
 from django.views.generic import ListView
 from django.views.generic import View
 from django.http import JsonResponse
+from django.http import HttpResponseRedirect
 
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
@@ -47,3 +48,136 @@ class Ruleslist(generic.ListView):
         return context
 
     # return render(request, 'rules_management/rulesList.html')
+
+
+class AddItemRule(View):
+    def get(self, request):
+        rulecode = request.GET.get('rulecode', None)
+        itemid =request.GET.get('itemid', None)
+
+        print(rulecode)
+        print(itemid)
+
+        obj = Rule1.objects.create(
+            rule_code=rulecode,
+            item_id=itemid,
+            active_status=1
+        )
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def getItemRule(request):
+
+    status_id = request.GET.get('id', None)    
+    print(status_id)    
+    obj = Rule1.objects.get(id=status_id)
+    realstatus=obj.active_status
+
+    if(realstatus==True):
+        print('inside true')
+        obj.active_status = 0
+        obj.save()
+        data = {
+        'is_taken': 2
+        }
+        return JsonResponse(data)
+
+    else:
+        print('inside true')
+
+        obj.active_status = 1
+        obj.save()
+        data = {
+        'is_taken': 1
+        }
+        return JsonResponse(data)
+
+
+class AddPriceRule(View):
+    def get(self, request):
+
+        ruleid= request.GET.get('ruleid', None)
+        price= request.GET.get('priceLimit', None)
+
+        print(price)
+        print(ruleid)
+    
+        obj = Rule2.objects.get(id=ruleid)
+        obj.price_limit=price
+        obj.save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def getPriceRule(request):
+    status_id = request.GET.get('id', None)    
+    print(status_id)    
+    obj = Rule2.objects.get(id=status_id)
+    realstatus=obj.active_status
+
+    if(realstatus==True):
+        print('inside true')
+        obj.active_status = 0
+        obj.save()
+        data = {
+        'is_taken': 2
+        }
+        return JsonResponse(data)
+
+    else:
+        print('inside true')
+
+        obj.active_status = 1
+        obj.save()
+        data = {
+        'is_taken': 1
+        }
+        return JsonResponse(data)
+
+
+class AddlevelRule(View):
+    def get(self, request):
+
+        ruleid= request.GET.get('ruleid1', None)
+        level= request.GET.get('level', None)
+
+        print(level)
+        print(ruleid)
+    
+        obj = Rule3.objects.get(id=ruleid)
+        obj.level=level
+        obj.save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def getlevelRule(request):
+    status_id = request.GET.get('id', None)    
+    print(status_id)    
+    obj = Rule3.objects.get(id=status_id)
+    realstatus=obj.active_status
+
+    if(realstatus==True):
+        print('inside true')
+        obj.active_status = 0
+        obj.save()
+        data = {
+        'is_taken': 2
+        }
+        return JsonResponse(data)
+
+    else:
+        print('inside true')
+
+        obj.active_status = 1
+        obj.save()
+        data = {
+        'is_taken': 1
+        }
+        return JsonResponse(data)
+
+
+
+        
+
+
+
