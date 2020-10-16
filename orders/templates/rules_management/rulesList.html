@@ -4,5 +4,236 @@
 
 {% block content %}
 
-    <h1>inside rules list</h1>
+<div id="page-wrapper">
+  <div id="page-inner">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Rules Management</h1>
+      </div>
+    </div>
+    <h4>Items Rule</h4>
+    <table class="table table-striped">
+      <th>Rule Code</th>
+      <th>Item Name</th>
+      <th>status</th>
+    <tbody>
+      {% for rule in rule1 %}
+      <tr>
+        <td>{{rule.rule_code}}</td>
+        <td>{{rule.item.name}}</td>
+        <td>
+          <!-- <button class="btn btn-success" id="rule1Activate" data-id="{{rule.id}}" name="rule1Activate">Activate</button> -->
+          {% if rule.active_status == True %}
+          <input type="checkbox" checked data-toggle="toggle" id="rule1Activate" data-id="{{rule.id}}" name="rule1Activate">
+          {% else %}
+          <input type="checkbox" data-toggle="toggle" id="rule1Activate" data-id="{{rule.id}}" name="rule1Activate">
+          {% endif %}
+
+        </td>
+      </tr>
+      {% endfor %}
+      
+    </tbody>
+    </table>
+    <button type="button" class="btn btn-success pull-right" data-toggle="modal" id="addItemRule" data-target="#addRule1">Add New Rule</button>
+    <div class="row"></div>
+    <h4>Price Range Rule</h4>
+    <table class="table table-striped">
+      <th>Rule Code</th>
+      <th>Price Limit</th>
+      <th>Status</th>
+      <th>Action</th>
+    <tbody>
+      {% for rule in rule2 %}
+      <tr>
+        <td>{{rule.rule_code}}</td>
+        <td>{{rule.price_limit}}</td>
+        <td>
+          {% if rule.active_status == True %}
+          <input type="checkbox" checked data-toggle="toggle" id="rule2Activate" data-id="{{rule.id}}" name="rule2Activate">
+          {% else %}
+          <input type="checkbox" data-toggle="toggle" id="rule2Activate" data-id="{{rule.id}}" name="rule2Activate">
+          {% endif %}
+        </td>
+        <td>
+          <button type="button" class="btn btn-warning" data-toggle="modal" id="mdo" data-target="#exampleModal" data-whatever="{{rule.id}}">edit</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+
+    <h4>Approve Level Rule</h4>
+    <table class="table table-striped">
+      <th>Rule Code</th>
+      <th>Approval Level</th>
+      <th>Status</th>
+      <th>Action</th>
+
+    <tbody>
+      {% for rule in rule3 %}
+      <tr>
+        <td>{{rule.rule_code}}</td>
+        <td>
+          {% if rule.level == 1 %}
+          <p>Supervisor Approval</p>
+          {% else %}
+          <p>Supervisor & Manager Approval</p>
+
+          {% endif %}
+        </td>
+        <td>
+          {% if rule.active_status == True %}
+          <input type="checkbox" checked data-toggle="toggle" id="rule3Activate" data-id="{{rule.id}}" name="rule3Activate">
+          {% else %}
+          <input type="checkbox" data-toggle="toggle" id="rule3Activate" data-id="{{rule.id}}" name="rule3Activate">
+          {% endif %}
+
+        </td>
+        <td>
+          <button type="button" class="btn btn-warning" data-toggle="modal" id="mdo" data-target="#exampleModal1" data-whatever="{{rule.id}}">edit</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+    <!-- /. ROW  -->
+    <hr />
+    
+<!------------------------------------------------------------------- rule1 -->
+
+    <div class="modal fade" id="addRule1" tabindex="-1" role="dialog" aria-labelledby="addRule1Label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="modal-title" id="addRule1Label">Add New Item Rule</h3>
+            
+          </div>
+          <div class="modal-body">
+            <form name="rule1data" id="rule1data" method="get" action="{% url 'rule1add'%}">
+              <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Rule Code:</label>
+                <input type="text" class="form-control" id="recipient-name" name="rulecode">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Item:</label>
+                <select
+                class="form-control"
+                id="itemid"
+                name="itemid"
+                >
+              <option class="d-none" disabled selected>Select Item</option>
+        
+              {% for item in items %}
+            
+                  <option style="color:black;" value="{{item.id}}">{{item.name}}</option>
+              {% endfor %}
+              
+             
+            </select>
+              </div>
+           
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add</button>
+
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+<!------------------------------------------------------------------- rule2 -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modal-title" id="exampleModalLabel">Update Price Limit</h3>
+        
+      </div>
+      <div class="modal-body">
+        <form id="rule2update" name="rule2update" method="get" action="{% url 'rule2add'%}">
+          <div class="form-group">
+            <input type="hidden"  class="form-control" name="ruleid" id="ruleid">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Price Limit:</label>
+            <input type="number" required class="form-control" name="priceLimit" id="priceLimit">
+          </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!------------------------------------------------------------------- rule3 -->
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModal1Label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modal-title" id="exampleModal1Label">Update Approve Level</h3>
+        
+      </div>
+      <div class="modal-body">
+        <form id="rule3update" name="rule3update" method="get" action="{% url 'rule3add'%}">
+          <div class="form-group">
+            <input type="hidden"  class="form-control" name="ruleid1" id="ruleid1">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Approval Level:</label>
+          <select
+            class="form-control"
+            id="level"
+            name="level"
+            >
+          <option class="d-none" disabled selected>Select Item</option>
+          <option style="color:black;" value="1">Supervisor Only</option>
+          <option style="color:black;" value="2">Supervisor & Manager only</option>
+
+          
+         
+        </select>
+          </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+    <!-- /. ROW  -->
+  </div>
+  <!-- /. PAGE INNER  -->
+</div>
+
 {% endblock %}
+
+{% block javascript %}
+
+
+
+{% endblock javascript %}
+

@@ -45,7 +45,12 @@ body {
 .sidebar-collapse .nav {
 	padding:0;
     padding-top:50px;
+    position: fixed;
+    /* left: 4; */
+    top: 2;
+   
 }
+
 
 .sidebar-collapse > .nav > li > a {
 	padding:15px 10px;
@@ -65,7 +70,8 @@ font-size: 16px;
 
 .navbar-side {
 	border:none;
-	background-color: #fff;
+    background-color: #fff;
+
 	
 }
 .navbar-inverse {
@@ -134,7 +140,7 @@ min-height: 80px;
  
  @media(min-width:768px) {
      #page-wrapper{
-               margin: 0 0 0 260px;
+               margin: 0 0 0 209px;
         padding: 15px 30px;
         min-height: 1050px;
 		
