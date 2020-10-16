@@ -19,9 +19,19 @@ from orders import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index , name= 'login_page'),
-    path('hi/', views.index, name= 'register_render'),
-    path('login/', views.login_web, name= 'login_check'),
-    path('logout/', views.logout_view, name= 'logout_view'),
-    path('check/', views.check_web, name= 'login_view_check'),
+    path('', views.index, name='login_page'), #login page
+    path('hi/', views.index, name='register_render'), #not implemented
+    path('login/', views.login_web, name='login_check'),
+    path('logout/', views.logout_view, name='logout_view'),
+    path('check/', views.check_web, name='login_view_check'), #sample
+
+    path('requests/', views.ViewRequests.as_view(), name='order_requests'), 
+    path('items/', views.ViewItems.as_view(), name='items_catalog'), 
+    path('items/add', views.add_items, name='items_add'), 
+    path('items/<int:pk>/prices/add', views.add_prices, name= 'item_prices_add'), 
+    path('items/<int:pk>/prices', views.CreateItemPrices.as_view(), name='item_prices_view'), 
+  #  path('requests/purchase-orders', views.check_web, name= 'purchase_order_add'), 
+  #  path('check/', views.check_web, name= 'login_view_check'), #sample
+
+
 ]
