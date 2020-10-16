@@ -9,7 +9,7 @@ from django.contrib.auth.models import Permission, User
 # Create your views here.
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
-from .models import Employee, Rule1, Rule2, Rule3, Pending_orders
+from .models import Employee, Rule1, Rule2, Rule3, Pending_orders,Item
 
 
 def index(request):
@@ -40,6 +40,7 @@ class Ruleslist(generic.ListView):
             'rule1': Rule1.objects.select_related('item'),
             'rule2': Rule2.objects.all(),
             'rule3': Rule3.objects.all(),
+            'items': Item.objects.all(),
             # 'more_context': Model.objects.all(),
         })
 
