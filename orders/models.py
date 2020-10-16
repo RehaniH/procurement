@@ -50,16 +50,10 @@ class ItemPrices(models.Model):
 class Stock(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
     quantity_type = models.CharField(max_length=15)
     reorder_level = models.IntegerField(default=10, null=True, blank=True) 
 
-class DeliveryLog(models.Model):
-    invoice_id = models.CharField(max_length=50)
-    note =  models.CharField(max_length=150)
-    date = models.CharField(max_length=50)
-    total = models.FloatField
-    quantity = models.IntegerField
-    price = models.FloatField   
 
 class OrderStatus(models.Model):
     status = models.CharField(max_length=50) #the string is already defined
@@ -67,15 +61,18 @@ class OrderStatus(models.Model):
                                             # get the object through OrderStatus.objects.get(abbv=PEND) gives Pending object
 class RequestOrders(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
-    expected_date = models.CharField(max_length=50)
+    quantity = models.IntegerField(null=True)
+    expected_date = models.CharField(max_length=50,null=True)
     comment = models.CharField(max_length=50, null=True, blank=True)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE)
-    status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
+    status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE,null=True,default='pending')
+    auto_genarated=models.BooleanField(default=False)
+    
 
 class Orders(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1, null=True, blank=True)
+    remaining_quantity=models.IntegerField(null=True)
     quantity_type = models.CharField(max_length=15, null=True, blank=True)
     price = models.FloatField(null=True, blank=True) 
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
@@ -85,4 +82,13 @@ class Orders(models.Model):
     delivery_date = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
     request = models.ForeignKey(RequestOrders, on_delete=models.CASCADE)
+
+class DeliveryLog(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
+    purchased_orders=models.ForeignKey(Orders,on_delete=models.CASCADE,null=True)
+    date = models.CharField(max_length=50)
+    quantity = models.IntegerField(blank=True,null=True)
+    qnty_type=models.CharField(max_length=50,null=True)
+      
+
 
