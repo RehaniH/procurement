@@ -32,12 +32,12 @@ def login_web(request):
 class Ruleslist(generic.ListView):
     model = Pending_orders
     template_name = 'rules_management/rulesList.html'
-    context_object_name = 'data'
+    context_object_name = 'listdata'
 
     def get_context_data(self, **kwargs):
         context = super(Ruleslist, self).get_context_data(**kwargs)
         context.update({
-            'rule1': Rule1.objects.all(),
+            'rule1': Rule1.objects.select_related('item'),
             'rule2': Rule2.objects.all(),
             'rule3': Rule3.objects.all(),
             # 'more_context': Model.objects.all(),
