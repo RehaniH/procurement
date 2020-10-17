@@ -6,7 +6,7 @@
     <title>Register</title>
 </head>
 <body>
-    <form>
+    <form action="{% url 'login_view_check' %}">
         {% csrf_token  %}
         <div class="form-group">
             <label for="usernameId">Username</label>
