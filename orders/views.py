@@ -3,6 +3,12 @@ import logging
 
 from django.shortcuts import render #, redirect
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.generic import ListView
+from django.views.generic import View
+from django.http import JsonResponse
+from django.http import HttpResponseRedirect
+
+from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django.contrib.auth.models import Permission, User
@@ -13,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Employee, RequestOrders, Item, ItemPrices, Supplier, Orders, OrderStatus
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db.utils import IntegrityError
+from .models import Employee, Rule1, Rule2, Rule3, Pending_orders,Item
 
 logger = logging.getLogger(__name__)
 
@@ -24,22 +31,11 @@ def  index(request):
 #use this to check if logged else redirect to login url
 @login_required
 def check_web(request):
-    try:
-        emp = request.user
-        employee = Employee.objects.get(user=emp)
-        if employee is not None:
-             print(employee.employee_type)
-        else:
-            print('redirect')    
-        data = {'Employee': 'success'}
-        return JsonResponse(data)  
 
-    except Exception as e:
-        print(e) 
-        data = {'Employee': 'error'}
-        print('User not found')
-        
-        return JsonResponse(data)    
+
+def index(request):
+    return render(request, 'orders/login.html')
+
 
 #login - authentication
 def login_web(request):
@@ -222,6 +218,162 @@ def create_purchase_order(request, pk):
         data['success_stat'] = success_status 
         return JsonResponse(data)  
 
+
+            print(employee.type)
+        else:
+            print('redirect')
+    except Exception as e:
+        print(e)
+
+
+class Ruleslist(generic.ListView):
+    model = Pending_orders
+    template_name = 'rules_management/rulesList.html'
+    context_object_name = 'listdata'
+
+    def get_context_data(self, **kwargs):
+        context = super(Ruleslist, self).get_context_data(**kwargs)
+        context.update({
+            'rule1': Rule1.objects.select_related('item'),
+            'rule2': Rule2.objects.all(),
+            'rule3': Rule3.objects.all(),
+            'items': Item.objects.all(),
+            # 'more_context': Model.objects.all(),
+        })
+
+        return context
+
+    # return render(request, 'rules_management/rulesList.html')
+
+
+class AddItemRule(View):
+    def get(self, request):
+        rulecode = request.GET.get('rulecode', None)
+        itemid =request.GET.get('itemid', None)
+
+        print(rulecode)
+        print(itemid)
+
+        obj = Rule1.objects.create(
+            rule_code=rulecode,
+            item_id=itemid,
+            active_status=1
+        )
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def getItemRule(request):
+
+    status_id = request.GET.get('id', None)    
+    print(status_id)    
+    obj = Rule1.objects.get(id=status_id)
+    realstatus=obj.active_status
+
+    if(realstatus==True):
+        print('inside true')
+        obj.active_status = 0
+        obj.save()
+        data = {
+        'is_taken': 2
+        }
+        return JsonResponse(data)
+
+    else:
+        print('inside true')
+
+        obj.active_status = 1
+        obj.save()
+        data = {
+        'is_taken': 1
+        }
+        return JsonResponse(data)
+
+
+class AddPriceRule(View):
+    def get(self, request):
+
+        ruleid= request.GET.get('ruleid', None)
+        price= request.GET.get('priceLimit', None)
+
+        print(price)
+        print(ruleid)
+    
+        obj = Rule2.objects.get(id=ruleid)
+        obj.price_limit=price
+        obj.save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def getPriceRule(request):
+    status_id = request.GET.get('id', None)    
+    print(status_id)    
+    obj = Rule2.objects.get(id=status_id)
+    realstatus=obj.active_status
+
+    if(realstatus==True):
+        print('inside true')
+        obj.active_status = 0
+        obj.save()
+        data = {
+        'is_taken': 2
+        }
+        return JsonResponse(data)
+
+    else:
+        print('inside true')
+
+        obj.active_status = 1
+        obj.save()
+        data = {
+        'is_taken': 1
+        }
+        return JsonResponse(data)
+
+
+class AddlevelRule(View):
+    def get(self, request):
+
+        ruleid= request.GET.get('ruleid1', None)
+        level= request.GET.get('level', None)
+
+        print(level)
+        print(ruleid)
+    
+        obj = Rule3.objects.get(id=ruleid)
+        obj.level=level
+        obj.save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def getlevelRule(request):
+    status_id = request.GET.get('id', None)    
+    print(status_id)    
+    obj = Rule3.objects.get(id=status_id)
+    realstatus=obj.active_status
+
+    if(realstatus==True):
+        print('inside true')
+        obj.active_status = 0
+        obj.save()
+        data = {
+        'is_taken': 2
+        }
+        return JsonResponse(data)
+
+    else:
+        print('inside true')
+
+        obj.active_status = 1
+        obj.save()
+        data = {
+        'is_taken': 1
+        }
+        return JsonResponse(data)
+
+
+
+        
 
 
 

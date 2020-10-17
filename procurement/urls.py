@@ -30,9 +30,22 @@ urlpatterns = [
     path('requests/<int:pk>/purchase-orders', views.create_purchase_order, name='purchase_order_add'), #puchase order view
     path('items/', views.ViewItems.as_view(), name='items_catalog'), 
     path('items/add', views.add_items, name='items_add'), 
-    path('items/<int:pk>/prices/add', views.add_prices, name= 'item_prices_add'), 
+    path('items/<int:pk>/prices/add', views.add_prices, name='item_prices_add'), 
     path('items/<int:pk>/prices', views.CreateItemPrices.as_view(), name='item_prices_view'), 
-    path('purchase-orders/', views.ViewPurchaseOrders.as_view() , name= 'list_purchase_order'), 
+    path('purchase-orders/', views.ViewPurchaseOrders.as_view(), name='list_purchase_order'), 
+   
+    path('rulelist/', views.Ruleslist.as_view(), name='rulelist'),
+
+    path('rules/rule1',views.AddItemRule.as_view(), name='rule1add'),
+    path('rule1status/rule1status',views.getItemRule, name='rule1status'),
+
+    path('rules/rule2',views.AddPriceRule.as_view(), name='rule2add'),
+    path('rule1status/rule2status',views.getPriceRule, name='rule2status'),
+
+     path('rules/rule3',views.AddlevelRule.as_view(), name='rule3add'),
+    path('rule1status/rule3status',views.getlevelRule, name='rule3status'),
+
+
 
 
 ]
