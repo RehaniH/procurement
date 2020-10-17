@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalog</title>
-</head>
-<body>
+{% extends '../accounts-base.html' %}
+{% block title %}Order Requests{% endblock title %}
+
+{% block stylesheet %}
+
+{% endblock stylesheet %}
+
+{% block content %}
+<div class="container-fluid">
     <form method="post" action="{% url 'items_add' %}">
         {% csrf_token %}
         <div class="form-group">
@@ -23,11 +24,31 @@
     </form>
 
     <div>
-        {% for item in item_list %}
-            <p>{{ item.name }}</p>
-            <p>{{ item.description }}</p>
-        {% endfor %}
+        <table class="table table-light">
+            <thead>
+                <tr scope="row">
+                    <th>#</th>
+                    <th>name</th>
+                    <th>description</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in item_list %}
+                <tr>
+                    <td scope="col">{{ item.id }} </td>
+                    <td>{{ item.name }} </td>
+                    <td>{{ item.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    
-</body>
-</html>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+
+</script>
+{% endblock javascript %}
+
