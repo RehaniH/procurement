@@ -92,8 +92,7 @@ class RequestOrders(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
     status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE,null=True,default='pending')
     auto_genarated=models.BooleanField(default=False)
-    qnty_type=models.CharField(max_length=50,null=True)
-    
+    quantity_type=models.CharField(max_length=50,null=True)
 
 class Orders(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
