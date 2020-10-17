@@ -12,7 +12,7 @@ class requestOrdersSerializer(serializers.ModelSerializer):
             'comment',
             'site',
             'status',
-            'qnty_type'
+            'quantity_type'
         )
         depth = 1
 
