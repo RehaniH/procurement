@@ -31,7 +31,22 @@ def  index(request):
 #use this to check if logged else redirect to login url
 @login_required
 def check_web(request):
+    try:
+        emp = request.user
+        employee = Employee.objects.get(user=emp)
+        if employee is not None:
+             print(employee.employee_type)
+        else:
+            print('redirect')    
+        data = {'Employee': 'success'}
+        return JsonResponse(data)  
 
+    except Exception as e:
+        print(e) 
+        data = {'Employee': 'error'}
+        print('User not found')
+        
+        return JsonResponse(data)    
 
 def index(request):
     return render(request, 'orders/login.html')
@@ -217,13 +232,6 @@ def create_purchase_order(request, pk):
     finally:
         data['success_stat'] = success_status 
         return JsonResponse(data)  
-
-
-            print(employee.type)
-        else:
-            print('redirect')
-    except Exception as e:
-        print(e)
 
 
 class Ruleslist(generic.ListView):
