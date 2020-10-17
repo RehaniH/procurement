@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Permission
-from .models import Employee, Orders, OrderStatus, Item, ItemPrices, Employee, UserType, Supplier, Location
+from .models import Employee, Orders, OrderStatus, Item, ItemPrices, Employee, UserType, Supplier, Location, Site, RequestOrders
 # Register your models here.
 
 admin.site.register(Permission)
@@ -12,3 +12,5 @@ admin.site.register(Employee)
 admin.site.register(UserType)
 admin.site.register(Supplier)
 admin.site.register(Location)
+admin.site.register(Site)
+admin.site.register(RequestOrders)

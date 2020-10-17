@@ -10,8 +10,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Employee, RequestOrders, Item, ItemPrices, Supplier
-
+from .models import Employee, RequestOrders, Item, ItemPrices, Supplier, Orders, OrderStatus
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.db.utils import IntegrityError
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ def  index(request):
 
 #sample
 #use this to check if logged else redirect to login url
-@login_required 
+@login_required
 def check_web(request):
     try:
         emp = request.user
@@ -115,9 +116,8 @@ def add_items(request):
         return JsonResponse(data)
 
 def add_prices(request, pk):
-    """Items are added to database"""
+    """Item prices are added to database"""
     try:
-        #item_id = request.POST['item_id']
         price = request.POST['price']
         supplier_id = request.POST['supplier']
 
@@ -146,7 +146,7 @@ def add_prices(request, pk):
         return JsonResponse(data)  
 
 class CreateItemPrices(generic.DetailView):
-
+    """View item prices page"""
     model = Item
     template_name = 'accounting/item-prices.html'
 
@@ -154,3 +154,74 @@ class CreateItemPrices(generic.DetailView):
         context = super().get_context_data(**kwargs)    
         context['supplier_list'] = Supplier.objects.all()
         return context
+
+class ViewPurchaseOrders(generic.ListView):
+    """"View a list of purchase orders created by account staff"""
+    model = Orders
+    template_name = 'accounting/purchase-orders.html'  
+
+
+def view_order_request(request, pk):
+    requestorders = RequestOrders.objects.get(pk=pk)
+    price_list = ItemPrices.objects.filter(item=requestorders.item)
+    print(price_list)
+    context = {
+        'price_list': price_list,
+        'requestorders': requestorders
+    }
+    return render(request, 'accounting/purchase-order-create.html', context)
+
+def create_purchase_order(request, pk):    
+    """create or draft a purchase order from an order request"""
+    success_status = 0 #success status is initially set to 0
+    try:
+        item_price_id = request.POST.get('item_price_id', None)
+        order_request = RequestOrders.objects.get(pk=pk)
+        supplier = None
+        item_price = None
+        active = False
+        order_item = order_request.item
+        if item_price_id is not None:
+            item_price = ItemPrices.objects.get(pk=item_price_id)
+            supplier = item_price.supplier
+            active = True
+        #set the order status to Pending     
+        status = OrderStatus.objects.get(abbv="PEND")
+        #if the price is not set, the order would be saved as a draft
+        price = (item_price.price if (item_price is not None) else 0)
+
+        order = Orders.objects.create(
+            item=order_item,
+            quantity=order_request.quantity,
+            quantity_type=order_request.quantity_type,
+            price=price,
+            delivery_date=order_request.expected_date,
+            site=order_request.site,
+            status=status,
+            request=order_request,
+            active=active,
+            supplier=supplier
+        )
+        data = {
+           'id': order.id,
+           'status': order.status.status,
+            'item': order.item.name,
+        } 
+        success_status = 1   
+    except ObjectDoesNotExist as ex:
+        logger.exception(ex)
+        data = {
+            'error_message': 'The required information does not exists',
+        }
+    except Exception as exception:
+        logger.exception(exception)
+        data = {
+            'error_message': 'Unable to process request',
+        }    
+    finally:
+        data['success_stat'] = success_status 
+        return JsonResponse(data)  
+
+
+
+

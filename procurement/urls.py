@@ -25,13 +25,14 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout_view'),
     path('check/', views.check_web, name='login_view_check'), #sample
 
-    path('requests/', views.ViewRequests.as_view(), name='order_requests'), 
+    path('requests/', views.ViewRequests.as_view(), name='list_order_requests'), 
+    path('requests/<int:pk>/', views.view_order_request, name='view_order_request'), #puchase order view
+    path('requests/<int:pk>/purchase-orders', views.create_purchase_order, name='purchase_order_add'), #puchase order view
     path('items/', views.ViewItems.as_view(), name='items_catalog'), 
     path('items/add', views.add_items, name='items_add'), 
     path('items/<int:pk>/prices/add', views.add_prices, name= 'item_prices_add'), 
     path('items/<int:pk>/prices', views.CreateItemPrices.as_view(), name='item_prices_view'), 
-  #  path('requests/purchase-orders', views.check_web, name= 'purchase_order_add'), 
-  #  path('check/', views.check_web, name= 'login_view_check'), #sample
+    path('purchase-orders/', views.ViewPurchaseOrders.as_view() , name= 'list_purchase_order'), 
 
 
 ]
