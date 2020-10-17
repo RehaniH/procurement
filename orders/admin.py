@@ -19,7 +19,7 @@ admin.site.register(Supplier)
 admin.site.register(Employee)
 admin.site.register(UserType)
 
-admin.site.register(UserType)
+
 
 
 

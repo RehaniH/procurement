@@ -71,7 +71,7 @@ class ItemPrices(models.Model):
 class Stock(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE,null=True)
     quantity_type = models.CharField(max_length=15)
     reorder_level = models.IntegerField(default=10, null=True, blank=True)
 
@@ -85,12 +85,12 @@ class OrderStatus(models.Model):
 
 
 class RequestOrders(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
     quantity = models.IntegerField(null=True)
     expected_date = models.CharField(max_length=50,null=True)
     comment = models.CharField(max_length=50, null=True, blank=True)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
-    status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE,null=True,default='pending')
+    site = models.ForeignKey(Site, on_delete=models.CASCADE,null=True)
+    status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE,null=True)
     auto_genarated=models.BooleanField(default=False)
     qnty_type=models.CharField(max_length=50,null=True)
     
