@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Order</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <div>
+            <p>{{ requestorders.id }}</p>
+            <p>{{ requestorders.site.name }}</p>
+            <p>{{ requestorders.item }}</p>
+            <p>{{ requestorders.quantity }}</p>
+            <p>{{ requestorders.expected_date }}</p>
+            <p>{{ requestorders.comment }}</p>
+        </div>
+
+        <div>
+            <form method="post" action="{% url 'purchase_order_add' requestorders.id %}">
+                {% csrf_token %}
+                {% for price in price_list %}
+                <div class="form-check">
+                    <input id="supplier-id" class="form-check-input" type="radio" name="item_price_id" value="{{ price.id }}">
+                    <label for="supplier-id" class="form-check-label">{{ price.supplier.company_name }} - {{ price.price }}  </label>
+                </div>
+                {% endfor %}
+                <button class="btn btn-info" type="submit">Create Purchase Order</button>
+                <button class="btn btn-info" type="submit">Save as a draft</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Orders</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <table class="table table-light">
+            <tbody>
+                {% for order in orders_list %}
+                <tr>
+                    <td> {{ order.id }} </td>
+                    <td> {{ order.site.name }} </td>
+                    <td> {{ order.status.status }} </td>
+                    <td> {{ order.active }} </td>
+                    <td> {{ order.delivery_date }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
