@@ -18,8 +18,14 @@ admin.site.register(Location)
 admin.site.register(Supplier)
 admin.site.register(Employee)
 admin.site.register(UserType)
+
+admin.site.register(UserType)
+
+
+
 admin.site.register(Rule1)
 admin.site.register(Rule2)
 admin.site.register(Rule3)
 admin.site.register(Pending_orders)
+
 
