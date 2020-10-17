@@ -11,7 +11,8 @@ class requestOrdersSerializer(serializers.ModelSerializer):
             'expected_date',
             'comment',
             'site',
-            'status'
+            'status',
+            'qnty_type'
         )
         depth = 1
 
@@ -24,8 +25,8 @@ class DeliveryLogSerializer(serializers.ModelSerializer):
             'item',
             'purchased_orders',
             'date',
-            'quantity',
-            'qnty_type',
+            'quantity'
+            
             # 'dele'
             
         )

@@ -67,6 +67,7 @@ class RequestOrders(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
     status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE,null=True,default='pending')
     auto_genarated=models.BooleanField(default=False)
+    qnty_type=models.CharField(max_length=50,null=True)
     
 
 class Orders(models.Model):
@@ -88,7 +89,7 @@ class DeliveryLog(models.Model):
     purchased_orders=models.ForeignKey(Orders,on_delete=models.CASCADE,null=True)
     date = models.CharField(max_length=50)
     quantity = models.IntegerField(blank=True,null=True)
-    qnty_type=models.CharField(max_length=50,null=True)
+    
       
 
 
