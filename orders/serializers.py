@@ -36,6 +36,7 @@ class StockSerializer(serializers.ModelSerializer):
         model=Stock
         fields=(
             'id',
+            'item',
             'quantity',
             'site',
             'quantity_type',

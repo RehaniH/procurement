@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-from .models import DeliveryLog, OrderStatus, RequestOrders, Stock,Orders
+from .models import DeliveryLog, Item, OrderStatus, RequestOrders, Stock,Orders
 from .serializers import DeliveryLogSerializer, StockSerializer, requestOrdersSerializer
 from rest_framework.decorators import api_view
 
@@ -97,6 +97,7 @@ def DeliveryLog_list(request):
 
         stock.save()
 
+
         print(stock)
 
 
@@ -158,6 +159,28 @@ def Stock_detail(request, pk):
  
     elif request.method == 'PUT': 
         Stock_data = JSONParser().parse(request) 
+        print(Stock_data)
+        qnty=Stock_data['quantity']
+        print(Stock_data['item'])
+        Item_id=Stock_data['item']
+
+
+
+        orderobj=Item.objects.get(pk=Item_id)
+        statusobj=OrderStatus.objects.get(status__iexact='reorder item')
+        
+
+
+
+        print(orderobj)
+        if(qnty<=Stocks.reorder_level):
+            obj=RequestOrders.objects.create(
+                item=orderobj,
+                status=statusobj,
+                auto_genarated=True
+
+            )
+
         Stock_serializer = StockSerializer(Stocks, data=Stock_data) 
         if Stock_serializer.is_valid(): 
             Stock_serializer.save() 
@@ -167,6 +190,8 @@ def Stock_detail(request, pk):
     elif request.method == 'DELETE': 
         Stocks.delete() 
         return JsonResponse({'message': 'Stock was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+
 
     
     
