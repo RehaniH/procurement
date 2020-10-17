@@ -36,14 +36,14 @@ urlpatterns = [
    
     path('rulelist/', views.Ruleslist.as_view(), name='rulelist'),
 
-    path('rules/rule1',views.AddItemRule.as_view(), name='rule1add'),
-    path('rule1status/rule1status',views.getItemRule, name='rule1status'),
+    path('rules/rule1', views.AddItemRule.as_view(), name='rule1add'),
+    path('rule1status/rule1status', views.getItemRule, name='rule1status'),
 
-    path('rules/rule2',views.AddPriceRule.as_view(), name='rule2add'),
-    path('rule1status/rule2status',views.getPriceRule, name='rule2status'),
+    path('rules/rule2', views.AddPriceRule.as_view(), name='rule2add'),
+    path('rule1status/rule2status', views.getPriceRule, name='rule2status'),
 
-     path('rules/rule3',views.AddlevelRule.as_view(), name='rule3add'),
-    path('rule1status/rule3status',views.getlevelRule, name='rule3status'),
+    path('rules/rule3', views.AddlevelRule.as_view(), name='rule3add'),
+    path('rule1status/rule3status', views.getlevelRule, name='rule3status'),
 
 
 

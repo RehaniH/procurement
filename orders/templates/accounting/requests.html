@@ -1,11 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Requests</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends '../accounts-base.html' %}
+{% block title %}Order Requests{% endblock title %}
+
+{% block stylesheet %}
+
+{% endblock stylesheet %}
+
+{% block content %}
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Order Requests</h1>
+            </div>
+            {% for site in sites_list %}
+            <div class="container bg-light">
+                <p>{{ site.name }} </p>
+                {% for requestorder in requestorders_list  %}
+                    {% if requestorder.site == site%}
+                    <div class="bg-light">
+                        <p>{{ requestorder.id }}  </p>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+
+</script>
+{% endblock javascript %}
