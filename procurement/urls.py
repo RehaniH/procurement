@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import include,url
 from django.contrib import admin
 from django.urls import path
 from orders import views
@@ -44,6 +45,8 @@ urlpatterns = [
 
     path('rules/rule3', views.AddlevelRule.as_view(), name='rule3add'),
     path('rule1status/rule3status', views.getlevelRule, name='rule3status'),
+
+    url('apis/', include('orders.urls')),
 
 
 
