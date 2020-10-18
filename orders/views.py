@@ -378,7 +378,7 @@ def create_purchase_order(request, pk):
         status = OrderStatus.objects.get(abbv="PEND")
         #if the price is not set, the order would be saved as a draft
         price = (item_price.price if (item_price is not None) else 0)
-
+        
         order = Orders.objects.create(
             item=order_item,
             quantity=order_request.quantity,
@@ -391,6 +391,7 @@ def create_purchase_order(request, pk):
             active=active,
             supplier=supplier
         )
+
         data = {
            'id': order.id,
            'status': order.status.status,
@@ -409,7 +410,8 @@ def create_purchase_order(request, pk):
         }    
     finally:
         data['success_stat'] = success_status 
-        return JsonResponse(data)  
+        return JsonResponse(data)
+    
 
 
 class Ruleslist(generic.ListView):
@@ -543,7 +545,9 @@ def getlevelRule(request):
         obj.active_status = 0
         obj.save()
         data = {
+        'id': status_id,
         'is_taken': 2
+        
         }
         return JsonResponse(data)
 
@@ -553,7 +557,9 @@ def getlevelRule(request):
         obj.active_status = 1
         obj.save()
         data = {
+        'id': status_id,
         'is_taken': 1
+        
         }
         return JsonResponse(data)
 

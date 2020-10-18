@@ -84,9 +84,9 @@
         </td>
         <td>
           {% if rule.active_status == True %}
-          <input type="checkbox" checked data-toggle="toggle" id="rule3Activate" data-id="{{rule.id}}" name="rule3Activate">
+          <input type="checkbox" checked data-toggle="toggle" id="{{rule.id}}" data-id="{{rule.id}}" name="rule3Activate">
           {% else %}
-          <input type="checkbox" data-toggle="toggle" id="rule3Activate" data-id="{{rule.id}}" name="rule3Activate">
+          <input type="checkbox" data-toggle="toggle" id="{{rule.id}}" data-id="{{rule.id}}" name="rule3Activate">
           {% endif %}
 
         </td>

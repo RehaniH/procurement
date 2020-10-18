@@ -104,7 +104,7 @@ class Orders(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     approved_by = models.ForeignKey(
-        Employee, on_delete=models.CASCADE, null=True, blank=True)
+        UserType, on_delete=models.CASCADE, null=True, blank=True)
     delivery_date = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
     request = models.ForeignKey(RequestOrders, on_delete=models.CASCADE)
@@ -140,6 +140,10 @@ class DeliveryLog(models.Model):
 
 class Pending_orders(models.Model):
     orderno = models.ForeignKey(Orders, on_delete=models.CASCADE)
-    Ruletype1 = models.IntegerField(null=True, blank=False)
-    Ruletype2 = models.IntegerField(null=True, blank=False)
-    Ruletype3 = models.IntegerField(null=True, blank=False)
+    Ruletype1 = models.IntegerField(default=0,null=False, blank=False)
+    Ruletype2 = models.IntegerField(default=0,null=False, blank=False)
+    Ruletype3 = models.ForeignKey(Rule3, on_delete=models.CASCADE)
+    DeleteRequest = models.IntegerField(default=0,null=False, blank=False)
+    EditRequest = models.IntegerField(default=0,null=False, blank=False)
+    approved = models.BooleanField(default=False,null=True,blank=False)
+
