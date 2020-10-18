@@ -40,7 +40,7 @@ class Supplier(models.Model):
 
 class UserType(models.Model):
     name =  models.CharField(max_length=50)  
-    abbv =  models.CharField(max_length=13) 
+    abbv =  models.CharField(max_length=13) #MANG #SUPV #SMANG #ACCST
 
     def __str__(self):
         return self.name
