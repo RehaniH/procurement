@@ -4,3 +4,7 @@ db.sqlite3
 
 # VS Code #
 .vscode/
+
+#remove pycache #
+
+orders/__pycache__/*.pyc

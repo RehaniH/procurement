@@ -23,7 +23,8 @@ class Location(models.Model):
         if self.address_line3 is not None:
             add = add + self.address_line3 + ', '
         add = add + self.city + ' (' + self.postal_code + ') '
-        return add   
+        return add
+
 
 class Site(models.Model):
     name = models.CharField(max_length=50)
@@ -38,21 +39,26 @@ class Supplier(models.Model):
     contact_number = models.CharField(max_length=13)
     email = models.CharField(max_length=50)
 
+
 class UserType(models.Model):
-    name =  models.CharField(max_length=50)  
-    abbv =  models.CharField(max_length=13) 
+    name = models.CharField(max_length=50)
+    abbv = models.CharField(max_length=13)
 
     def __str__(self):
         return self.name
 
+
 class Employee(models.Model):
-    user = models.OneToOneField(user, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.OneToOneField(
+        user, on_delete=models.CASCADE, null=True, blank=True)
     firstname = models.CharField(max_length=20)
     lastname = models.CharField(max_length=20)
     email = models.CharField(max_length=50)
     contact_number = models.CharField(max_length=13)
-    employee_type = models.ForeignKey(UserType, on_delete=models.CASCADE) 
-    location = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
+    employee_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
+    location = models.ForeignKey(
+        Site, on_delete=models.CASCADE, null=True, blank=True)
+
 
 class Item(models.Model):
     name = models.CharField(max_length=50)
@@ -71,10 +77,9 @@ class ItemPrices(models.Model):
 class Stock(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True)
     quantity_type = models.CharField(max_length=15)
     reorder_level = models.IntegerField(default=10, null=True, blank=True)
-
 
 
 class OrderStatus(models.Model):
@@ -85,22 +90,25 @@ class OrderStatus(models.Model):
 
 
 class RequestOrders(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField(null=True)
-    expected_date = models.CharField(max_length=50,null=True)
+    expected_date = models.CharField(max_length=50, null=True)
     comment = models.CharField(max_length=50, null=True, blank=True)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE,default=2)
-    status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE,null=True,default='pending')
-    auto_genarated=models.BooleanField(default=False)
-    quantity_type=models.CharField(max_length=50,null=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True)
+    status = models.ForeignKey(
+        OrderStatus, on_delete=models.CASCADE, null=True)
+    auto_genarated = models.BooleanField(default=False)
+    quantity_type = models.CharField(max_length=50, null=True)
+
 
 class Orders(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1, null=True, blank=True)
-    remaining_quantity=models.IntegerField(null=True)
+    remaining_quantity = models.IntegerField(null=True)
     quantity_type = models.CharField(max_length=15, null=True, blank=True)
-    price = models.FloatField(null=True, blank=True) 
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, null=True, blank=True)
+    price = models.FloatField(null=True, blank=True)
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.CASCADE, null=True, blank=True)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     approved_by = models.ForeignKey(
@@ -108,7 +116,7 @@ class Orders(models.Model):
     delivery_date = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
     request = models.ForeignKey(RequestOrders, on_delete=models.CASCADE)
-    #do we need a comment here as in RequestOrders
+    # do we need a comment here as in RequestOrders
 
 
 class Rule1(models.Model):
@@ -130,12 +138,11 @@ class Rule3(models.Model):
 
 
 class DeliveryLog(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
-    purchased_orders=models.ForeignKey(Orders,on_delete=models.CASCADE,null=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
+    purchased_orders = models.ForeignKey(
+        Orders, on_delete=models.CASCADE, null=True)
     date = models.CharField(max_length=50)
-    quantity = models.IntegerField(blank=True,null=True)
-    
-      
+    quantity = models.IntegerField(blank=True, null=True)
 
 
 class Pending_orders(models.Model):
