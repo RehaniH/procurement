@@ -32,6 +32,9 @@ class Site(models.Model):
     contact_number = models.CharField(max_length=15)
     budget = models.FloatField
 
+    def __str__(self):
+        return self.name
+
 
 class Supplier(models.Model):
     company_name = models.CharField(max_length=50)
@@ -72,6 +75,12 @@ class ItemPrices(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     price = models.CharField(max_length=50)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['item', 'supplier', 'price'], name='item_suppliers')
+        ]
 
 
 class Stock(models.Model):
