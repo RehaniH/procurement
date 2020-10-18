@@ -108,7 +108,7 @@ class RequestOrders(models.Model):
         OrderStatus, on_delete=models.CASCADE, null=True)
     auto_genarated = models.BooleanField(default=False)
     quantity_type = models.CharField(max_length=50, null=True)
-
+    
     def __str__(self):
         return self.item.name
 
