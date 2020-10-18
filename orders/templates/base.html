@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Responsive Admin</title>
+    <title>{% block title %}Title{% endblock title %}</title>
     <!-- BOOTSTRAP STYLES-->
     <link href="{% static 'css/bootstrap.css'%}" rel="stylesheet" />
     <!-- FONTAWESOME STYLES-->
@@ -40,12 +40,12 @@
               <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="#">
-              <h3 style="color: #fff">PP</h3>
+              <h3 style="color: #fff">Awesome Constructors</h3>
             </a>
           </div>
 
           <span class="logout-spn">
-            <a href="#" style="color: #fff">LOGOUT</a>
+            <a href="{% url 'logout_view' %}" style="color: #fff">LOGOUT</a>
           </span>
         </div>
       </div>
@@ -241,6 +241,7 @@
 
      
     </script>
-
+  {% block javascript %}
+  {% endblock javascript %}
   </body>
 </html>
