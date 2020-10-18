@@ -1,21 +1,15 @@
 """The class for logging to server"""
 import logging
 
-from django.shortcuts import render  # , redirect
 from django.utils.datastructures import MultiValueDictKeyError
 from django.http import JsonResponse
 from django.views import generic
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
 
-from orders.serializers import DeliveryLogSerializer, StockSerializer, requestOrdersSerializer
-from rest_framework.decorators import api_view
-
-from django.contrib.auth.models import Permission, User
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
-from orders.models import Item, OrderStatus, RequestOrders, Site, Stock, Orders
-from orders.models import Employee, ItemPrices, Supplier
+from orders.models import (
+    Employee, ItemPrices, Supplier, Item, OrderStatus, RequestOrders, Site, Stock, Orders)
 
 
 logger = logging.getLogger(__name__)
@@ -62,6 +56,7 @@ def add_items(request):
 def add_prices(request, pk):
     """Item prices are added to database"""
     success_status = 0  # initially success status is set to zero
+    data = {}
     try:
         price = request.POST['price']
         supplier_id = request.POST['supplier']
