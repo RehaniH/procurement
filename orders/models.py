@@ -125,7 +125,7 @@ class Rule2(models.Model):
 
 class Rule3(models.Model):
     rule_code = models.CharField(max_length=15)
-    level = models.IntegerField(default=1, null=False, blank=False)
+    level = models.IntegerField(default=1, null=True, blank=True)
     active_status = models.BooleanField(default=True)
 
 
@@ -142,8 +142,8 @@ class Pending_orders(models.Model):
     orderno = models.ForeignKey(Orders, on_delete=models.CASCADE)
     Ruletype1 = models.IntegerField(default=0,null=False, blank=False)
     Ruletype2 = models.IntegerField(default=0,null=False, blank=False)
-    Ruletype3 = models.ForeignKey(Rule3, on_delete=models.CASCADE)
+    Ruletype3 = models.IntegerField(default=0,null=False, blank=False)
     DeleteRequest = models.IntegerField(default=0,null=False, blank=False)
     EditRequest = models.IntegerField(default=0,null=False, blank=False)
-    approved = models.BooleanField(default=False,null=True,blank=False)
+    approved = models.BooleanField(default=False,null=False,blank=False)
 
