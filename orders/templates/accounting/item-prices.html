@@ -1,39 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prices</title>
-</head>
-<body>
-    <div class="container-fluid">
-        <form method="post" action="{% url 'item_prices_add' 1 %}">
-            {% csrf_token %}
-            <input id="itemId" class="form-control" type="text" name="item_id" hidden>
+{% extends '../accounts-base.html' %}
+{% block title %}Items Prices{% endblock title %}
 
-            <div class="form-group">
-                <label for="supplierId" class="text-black font-weight-bold">Subject</label>
-                <select id="supplierId" class="form-control selectpicker" data-live-search="true" name="supplier">
-                    <option value="default" disabled selected> -- Supplier</option>
-                    {% for supplier in supplier_list %}
-                    <option value="{{ supplier.id }}">{{ supplier.company_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="priceId">Price</label>
-                <input id="priceId" class="form-control" type="number" name="price">
-            </div>
+{% block stylesheet %}
 
-            <div class="form-group">
-                <input id="submit_btn" class="form-control" type="submit" value="Add">
-            </div>
-        </form>
+{% endblock stylesheet %}
 
+{% block content %}
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Items Prices</h1>
+            </div>
+        </div>
         <div class="container-fluid">
-            
+            <div class="container">
+                <p>Item : {{ item.name }} </p>
+                {% if item.description %}
+                <p><strong>Description : </strong></p>
+                    <pre>            {{ item.description }} </pre>
+                {% endif %}
+            </div>
+            <div class="container">
+                <div class="container">
+                    <table class="table table-light" id="prices_table">
+                        <thead class="thead-light">
+                            <tr scope="row">
+                                <th>#</th>
+                                <th>Supplier</th>
+                                <th>Price</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <form method="post" action="{% url 'item_prices_add' item.id  %}" class="form form-inline">
+                                    {% csrf_token %}
+                                    <td> </td>
+                                    <input id="itemId" class="form-control" type="text" name="item_id" style="display: none;" />
+                                    <td>
+
+                                        <div class="form-group col-4 m-2">
+                                            <!-- <label for="supplierId" class="text-black font-weight-bold">Subject</label> -->
+                                            <select id="supplierId" class="form-control selectpicker" data-live-search="true" name="supplier">
+                                                <option value="default" disabled selected> -- Supplier</option>
+                                                {% for supplier in supplier_list %}
+                                                <option value="{{ supplier.id }}">{{ supplier.company_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+
+                                        <div class="form-group col-4  m-2">
+                                            <!-- <label for="priceId">Price</label> -->
+                                            <input id="priceId" class="form-control" type="number" name="price" min="1">
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="form-group col-1">
+                                            <input id="submit_btn" class="form-control btn btn-info" type="submit" value="Add">
+                                        </div>
+
+                                    </td>
+                    
+                                </form>
+                            </tr>
+                            {% for price in item.itemprices_set.all %}
+                            <tr id="{{ price.id }}" >
+                                <td scope="col"> {{ forloop.counter }} </td>
+                                <td> {{ price.supplier.company_name }} </td>
+                                <td class="text-right"> {{ price.price }}.00 </td>
+                                <td class="text-right">
+                                    <div class="form-group col-1  m-2">
+                                        <input id="submit_btn" class="btn btn-danger" type="submit" value="Remove">
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+{% endblock content %}
+{% block javascript %}
+<script>
+$(document).ready(function(){
+
+    $('#prices_table:last-child').append(`
     
-</body>
-</html>
+        <tr id="{{ price.id }}" >
+            <td scope="col"> {{ forloop.counter }} </td>
+            <td> {{ price.supplier.company_name }} </td>
+            <td class="text-right"> {{ price.price }}.00 </td>
+            <td class="text-right">
+                <div class="form-group col-1  m-2">
+                    <input id="submit_btn" class="btn btn-danger" type="submit" value="Remove">
+                </div>
+            </td>
+        </tr>
+    `);
+
+    $.ajax({
+        
+    })
+
+});
+</script>
+{% endblock javascript %}

@@ -6,50 +6,63 @@
 {% endblock stylesheet %}
 
 {% block content %}
-<div class="container-fluid">
-    <form method="post" action="{% url 'items_add' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="my-input">Name</label>
-            <input id="my-input" class="form-control" type="text" name="item_name">
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Items Catalog</h2>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="my-input">Description</label>
-            <input id="my-input" class="form-control" type="text" name="item_description">
-        </div>
-        <div class="form-group">
-            <input id="my-input" class="form-control" type="submit" name="">
-        </div>
-        
-    </form>
+        <div class="container-fluid">
+            <div class="container">
+                <div class="row">
+                    <form method="post" action="{% url 'items_add' %}">
+                        {% csrf_token %}
+                        <div class="form-group col-4">
+                            <label for="my-input">Name</label>
+                            <input id="my-input" class="form-control" type="text" name="item_name">
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="my-input">Description</label>
+                            <textarea id="my-textarea" class="form-control" name="item_description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group col-3">
+                            <input id="my-input" class="form-control btn btn-info" type="submit" name="">
+                        </div>
 
-    <div>
-        <table class="table table-light">
-            <thead>
-                <tr scope="row">
-                    <th>#</th>
-                    <th>name</th>
-                    <th>description</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in item_list %}
-                <tr>
-                    <td scope="col">{{ item.id }} </td>
-                    <td>{{ item.name }} </td>
-                    <td>{{ item.description }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
+
+                    </form>
+                </div>
+            </div>
+            <div>
+                <table class="table table-light">
+                    <thead>
+                        <tr scope="row">
+                            <th>#</th>
+                            <th>name</th>
+                            <th>description</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in item_list %}
+                        <tr>
+                            <td scope="col">{{ item.id }} </td>
+                            <td>{{ item.name }} </td>
+                            <td>{{ item.description }}</td>
+                            <td><a href="{% url 'item_prices_view' item.id %}"> <button class="btn btn-primary" type="button">Add Price</button></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
 {% endblock content %}
 {% block javascript %}
 <script>
 
 </script>
 {% endblock javascript %}
-
