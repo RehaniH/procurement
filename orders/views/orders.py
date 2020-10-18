@@ -86,6 +86,56 @@ def create_purchase_order(request, pk):
         return JsonResponse(data)
 
 
+def update_purchase_order(request, request_id, order_id ):
+    """update a drafted purchase order"""
+    success_status = 0  # success status is initially set to 0
+    try:
+        item_price_id = request.POST.get('item_price_id', None)
+        print(order_id)
+        print(item_price_id)
+        #request_id = request.PUT.get('request_id', None)
+        #order_id = request.PUT.get('order_id', None)
+        order_request = RequestOrders.objects.get(pk=request_id)
+        active = True
+        
+        item_price = ItemPrices.objects.get(pk=item_price_id)
+        supplier = item_price.supplier
+
+        # set the order status to Pending
+        #status = OrderStatus.objects.get(abbv="PEND")
+        
+        price = item_price.price
+
+        order = Orders.objects.get(pk=order_id)
+        order.price = price
+        order.status = status
+        order.active = active
+        order.supplier = supplier
+        order.item = order_request.item
+        order.quantity = order_request.quantity
+        order.quantity_type = order_request.quantity_type
+        order.save()
+        data = {
+            'id': order.id,
+            'status': order.status.status,
+            'item': order.item.name,
+        }
+        success_status = 1
+    except ObjectDoesNotExist as ex:
+        logger.exception(ex)
+        data = {
+            'error_message': 'The required information does not exists',
+        }
+    except Exception as exception:
+        logger.exception(exception)
+        data = {
+            'error_message': 'Unable to process request',
+        }
+    finally:
+        data['success_stat'] = success_status
+        return JsonResponse(data)
+
+
 class Ruleslist(generic.ListView):
     model = Pending_orders
     template_name = 'rules_management/rulesList.html'

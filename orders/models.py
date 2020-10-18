@@ -49,7 +49,7 @@ class UserType(models.Model):
 
 
 class Employee(models.Model):
-    user = models.OneToOneField(
+    user = models.OneToOneField(#One to one ? 
         user, on_delete=models.CASCADE, null=True, blank=True)
     firstname = models.CharField(max_length=20)
     lastname = models.CharField(max_length=20)
@@ -115,7 +115,7 @@ class Orders(models.Model):
         Employee, on_delete=models.CASCADE, null=True, blank=True)
     delivery_date = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
-    request = models.ForeignKey(RequestOrders, on_delete=models.CASCADE)
+    request = models.OneToOneField(RequestOrders, on_delete=models.CASCADE)#make this a one to one feild
     # do we need a comment here as in RequestOrders
 
 

@@ -12,16 +12,31 @@
             <div class="col-md-12">
                 <h1>Order Requests</h1>
             </div>
+            <br>
+            <br>
             {% for site in sites_list %}
             <div class="container bg-light">
-                <p>{{ site.name }} </p>
-                {% for requestorder in requestorders_list  %}
+                <h4 class="text-info">{{ site.name }} </h4>
+                <table class="table table-light bg-info">
+                    {% for requestorder in requestorders_list  %}
                     {% if requestorder.site == site%}
-                    <div class="bg-light">
-                        <p>{{ requestorder.id }}  </p>
-                    </div>
+                    <tbody>
+                        <tr>
+                            <td>#{{ requestorder.id }}</td>
+                            <td class="text-right">{{ requestorder.item.name }} </td>
+                            <td class="text-right">{{ requestorder.quantity }}</td>
+                            <td class="text-right">{{ requestorder.quantity_type }}</td>
+                            <td class="text-right">{{ requestorder.status.status }}</td>
+                            <td class="text-right">{{ requestorder.expected_date }}</td>
+                            <td class="text-right"><a href="{% url 'view_order_request' requestorder.id %}">
+                                    <button class="btn btn-warning" type="button">Open</button>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
                     {% endif %}
-                {% endfor %}
+                    {% endfor %}
+                </table>
             </div>
             {% endfor %}
         </div>
@@ -30,6 +45,9 @@
 {% endblock content %}
 {% block javascript %}
 <script>
+    $(function () {
+
+    });
 
 </script>
 {% endblock javascript %}

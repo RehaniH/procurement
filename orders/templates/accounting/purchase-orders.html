@@ -14,19 +14,37 @@
             </div>
         </div>
         <div class="container-fluid">
-            <table class="table table-light">
-                <tbody>
-                    {% for order in orders_list %}
-                    <tr>
-                        <td> {{ order.id }} </td>
-                        <td> {{ order.site.name }} </td>
-                        <td> {{ order.status.status }} </td>
-                        <td> {{ order.active }} </td>
-                        <td> {{ order.delivery_date }} </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="card shadow bg-white">
+                <div class="card-body">
+                    <table class="table table-light">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>order id</th>
+                                <th>site </th>
+                                <th>order status</th>
+                                <th>active </th>
+                                <th>expected date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders_list %}
+                            <tr>
+                                <td> #{{ order.id }} </td>
+                                <td> {{ order.site.name }} </td>
+                                <td> {{ order.status.status }} </td>
+                                <td style="color: #214761;"> {{ order.active }} </td>
+                                <td> {{ order.delivery_date }} </td>
+                                <td><a href="{% url 'view_order_request' order.request.id %}"><button class="btn btn-warning" type="button">Open</button></a>  </td>
+                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
         </div>
     </div>
 
