@@ -1,5 +1,6 @@
 """The class for logging to server"""
 import logging
+from re import T
 
 from django.shortcuts import render #, redirect
 from django.utils.datastructures import MultiValueDictKeyError
@@ -14,7 +15,7 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
 from .models import DeliveryLog, Item, OrderStatus, RequestOrders, Site, Stock,Orders
-from .serializers import DeliveryLogSerializer, StockSerializer, requestOrdersSerializer
+from .serializers import DeliveryLogSerializer, ItemSerializer, OrderSerializer, StockSerializer, requestOrdersSerializer
 from rest_framework.decorators import api_view
 
 from django.contrib.auth import authenticate, login, logout
@@ -75,20 +76,21 @@ def requestOrder_list(request):
         print(quantityy)
         expected_datee=reqorder_data['expected_date']
         commentt=reqorder_data['comment']
-        qnty_typee=reqorder_data['qnty_type']
+        qnty_typee=reqorder_data['quantity_type']
         print(qnty_typee)
         itemm = Item.objects.get(name=itemid)
         print(itemm)
         statusobj=OrderStatus.objects.get(status__iexact='pending')
         print(statusobj)
-        # siteobj=Site.objects.get()
+        siteobj=Site.objects.get(name__iexact='galle')
         obj=RequestOrders.objects.create(
                 item=itemm,
                 quantity=quantityy,
                 comment=commentt,
                 status=statusobj,
+                site=siteobj,
                 expected_date=expected_datee,
-                qnty_type=qnty_typee
+                quantity_type=qnty_typee
 
                 
 
@@ -121,11 +123,14 @@ def reqOrder_detail(request, pk):
         print(quantityy)
         expected_datee=reqorder_data['expected_date']
         commentt=reqorder_data['comment']
-        obj=RequestOrders.objects.update(
-                expected_date=expected_datee,
-                quantity=quantityy,
-                comment=commentt
-        )
+        obj=RequestOrders.objects.get(id=pk)
+        obj.expected_date=expected_datee
+        obj.quantity=quantityy
+        obj.comment=commentt
+
+        
+        obj.save()
+       
 
         request_serializer = requestOrdersSerializer(requestOrder, data=reqorder_data) 
         if request_serializer.is_valid(): 
@@ -222,12 +227,15 @@ def Stock_list(request):
         reorder_levell=stock_data['reorder_level']
         itemm = Item.objects.get(name=itemid)
         print(itemm)
+        siteobj=Site.objects.get(name__iexact='galle')
+        
 
         obj=Stock.objects.create(
                 item=itemm,
                 quantity=quantityy,
                 quantity_type=quantity_typee,
-                reorder_level=reorder_levell
+                reorder_level=reorder_levell,
+                site=siteobj,
             )
         req_serializer = StockSerializer(data=stock_data)
         if req_serializer.is_valid():
@@ -251,6 +259,11 @@ def Stock_detail(request, pk):
         Stock_data = JSONParser().parse(request) 
         print(Stock_data)
         qnty=Stock_data['quantity']
+        print(qnty)
+        obj1=Stock.objects.get(id=pk)
+        obj1.quantity=qnty
+        obj1.save()      
+        
         print(Stock_data['item'])
         Item_id=Stock_data['item']
         orderobj=Item.objects.get(pk=Item_id)
@@ -264,6 +277,7 @@ def Stock_detail(request, pk):
                 auto_genarated=True
 
             )
+        
 
         Stock_serializer = StockSerializer(Stocks, data=Stock_data) 
         if Stock_serializer.is_valid(): 
@@ -274,6 +288,57 @@ def Stock_detail(request, pk):
     elif request.method == 'DELETE': 
         Stocks.delete() 
         return JsonResponse({'message': 'Stock was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+#Stock
+@api_view(['GET', 'POST', 'DELETE'])
+def Order_list(request):
+    if request.method == 'GET':
+        Stocks=Orders.objects.all()
+        Order_Serializer=OrderSerializer(Stocks,many=True)
+        return JsonResponse(Order_Serializer.data,safe=False)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def Order_detail(request, pk):
+    try: 
+        orders = Orders.objects.get(pk=pk) 
+    except Stock.DoesNotExist: 
+        return JsonResponse({'message': 'The stock does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+    
+    if request.method == 'GET': 
+        Order_serializer = OrderSerializer(orders) 
+        return JsonResponse(Order_serializer.data) 
+ 
+    elif request.method == 'PUT': 
+        Order_data = JSONParser().parse(request) 
+        print(Order_data)
+        quantity1=Order_data['quantity']
+        statusobj=OrderStatus.objects.get(status__iexact='update pending')
+        obj2=Orders.objects.get(id=pk)
+        obj2.quantity=quantity1
+        obj2.status=statusobj
+        obj2.save()
+
+        Order_serializer = OrderSerializer(orders, data=Order_data) 
+        if Order_serializer.is_valid(): 
+            # Stock_serializer.save() 
+            return JsonResponse(Order_serializer.data) 
+        return JsonResponse(Order_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+ 
+    elif request.method == 'DELETE':
+        statusobj=OrderStatus.objects.get(status__iexact='delete pending')
+        obj2=Orders.objects.get(id=pk)
+        obj2.status=statusobj
+        obj2.save() 
+        
+        return JsonResponse({'message': 'Stock was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+ 
+def Item_list(request):
+    if(request.method)=='GET':
+        Item1=Item.objects.values('name')
+        Item2=list(Item1)
+        print(Item2)
+        Item_Serializer=ItemSerializer(Item1,many=True)
+        return JsonResponse(Item_Serializer.data,safe=False)
 
 
 

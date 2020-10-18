@@ -1,5 +1,5 @@
 from rest_framework import serializers 
-from orders.models import DeliveryLog, Item, RequestOrders, Stock
+from orders.models import DeliveryLog, Item, Orders, RequestOrders, Stock
 
 class requestOrdersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,7 +12,7 @@ class requestOrdersSerializer(serializers.ModelSerializer):
             'comment',
             'site',
             'status',
-            'qnty_type'
+            'quantity_type'
         )
         depth = 1
 
@@ -43,3 +43,34 @@ class StockSerializer(serializers.ModelSerializer):
             'quantity_type',
             'reorder_level'
         )
+        depth = 1
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Orders
+        fields=(
+            'id',
+            'item',
+            'quantity',
+            'remaining_quantity',
+            'quantity_type',
+            'price',
+            'supplier',
+            'site',
+            'status',
+            'approved_by',
+            'delivery_date',
+            'active',
+            'request'
+        )
+        depth = 1
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Item
+        fields=(
+            'id',
+            'name'
+            
+        )
+        depth = 1
