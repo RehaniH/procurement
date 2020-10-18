@@ -109,6 +109,9 @@ class RequestOrders(models.Model):
     auto_genarated = models.BooleanField(default=False)
     quantity_type = models.CharField(max_length=50, null=True)
 
+    def __str__(self):
+        return self.item.name
+
 
 class Orders(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)

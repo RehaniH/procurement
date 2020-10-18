@@ -9,14 +9,9 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 
 from django.shortcuts import render
-# andrew
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import status
-from orders.models import DeliveryLog, Item, OrderStatus, RequestOrders, Site, Stock, Orders
-from orders.serializers import DeliveryLogSerializer, StockSerializer, requestOrdersSerializer
-from rest_framework.decorators import api_view
-
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django.contrib.auth.models import Permission, User
