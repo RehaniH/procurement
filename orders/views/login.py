@@ -71,23 +71,6 @@ def logout_view(request):
     logout(request)
     return render(request, 'orders/login.html')
 
-@login_required
-def check_web(request):
-    try:
-        emp = request.user
-        employee = Employee.objects.get(user=emp)
-        if employee is not None:
-            print(employee.employee_type)
-        else:
-            print('redirect')
-        data = {'Employee': 'success'}
-        return JsonResponse(data)
 
-    except Exception as e:
-        print(e)
-        data = {'Employee': 'error'}
-        print('User not found')
-
-        return JsonResponse(data)
 
 

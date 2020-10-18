@@ -21,10 +21,8 @@ from orders import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='login_page'), #login page
-    path('hi/', views.index, name='register_render'), #not implemented
     path('login/', views.login_web, name='login_check'),
     path('logout/', views.logout_view, name='logout_view'),
-    path('check/', views.check_web, name='login_view_check'), #sample
 
     path('requests/', views.ViewRequests.as_view(), name='list_order_requests'), 
     path('requests/<int:pk>/', views.view_order_request, name='view_order_request'), #puchase order view

@@ -20,7 +20,7 @@ from orders.models import Employee, ItemPrices, Supplier
 
 logger = logging.getLogger(__name__)
 
-
+#@login_required
 class ViewItems(generic.ListView):
     """View a list of saved catalog items."""
     model = Item
@@ -29,7 +29,6 @@ class ViewItems(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['itemprices_list'] = ItemPrices.objects.all()
-       # context['academic_ll'] = AcademicYearSemester.objects.all()
         return context
 
 
