@@ -1,34 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Order</title>
-</head>
-<body>
-    <div class="container-fluid">
-        <div>
-            <p>{{ requestorders.id }}</p>
-            <p>{{ requestorders.site.name }}</p>
-            <p>{{ requestorders.item }}</p>
-            <p>{{ requestorders.quantity }}</p>
-            <p>{{ requestorders.expected_date }}</p>
-            <p>{{ requestorders.comment }}</p>
-        </div>
+{% extends '../accounts-base.html' %}
+{% block title %}Items Prices{% endblock title %}
 
-        <div>
-            <form method="post" action="{% url 'purchase_order_add' requestorders.id %}">
-                {% csrf_token %}
-                {% for price in price_list %}
-                <div class="form-check">
-                    <input id="supplier-id" class="form-check-input" type="radio" name="item_price_id" value="{{ price.id }}">
-                    <label for="supplier-id" class="form-check-label">{{ price.supplier.company_name }} - {{ price.price }}  </label>
+{% block stylesheet %}
+
+{% endblock stylesheet %}
+
+{% block content %}
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Purchase Order: </h2>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Request Id : #{{ requestorders.id }}</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Requestee : {{ requestorders.site.employee }}</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Site : {{ requestorders.site.name }}</h5>
+                    </div>
                 </div>
-                {% endfor %}
-                <button class="btn btn-info" type="submit">Create Purchase Order</button>
-                <button class="btn btn-info" type="submit">Save as a draft</button>
-            </form>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Item : {{ requestorders.item.name }}</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Quantity : {{ requestorders.quantity }}</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Expected Date: {{ requestorders.expected_date }}</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Comments: </h5>
+                        <pre>           <p>{{ requestorders.comment }}</p>       </pre>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div>
+                {% if price_list %}
+                <table class="table table-light">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Supplier</th>
+                            <th>Price</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <form id="orders_form " method="POST">
+                            {% csrf_token %}
+                            {% for price in price_list %}
+                            <tr>
+                                <td> {{ forloop.counter }} </td>
+                                <td> {{ price.supplier.company_name }} </td>
+                                <td> {{ price.price }} </td>
+                                <td><input id="supplier-id" class="form-check-input" type="radio" name="item_price_id"
+                                        value="{{ price.id }}">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            <button style="float: right; margin-left: 2;" class="btn btn-info" type="submit">Create
+                                Purchase Order</button>
+                            <button class="btn btn-success" type="submit">Save as a draft</button>
+                        </form>
+                    </tbody>
+                </table>
+
+
+                {% else %}
+                <h4>No Prices added for item to display</h4>
+                {% endif %}
+            </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+    $(function () {
+
+        $('.btn').click(function () {
+            
+            var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+            item_price_id = $('input[type="radio"][name="item_price_id"]:selected').val()
+
+            var order_id = '{{ requestorders.orders.id }}'
+            var request_id = '{{ requestorders.id }}'
+
+            var create_url = "{% url 'purchase_order_add' requestorders.id  %}"
+            var update_url = 'requests/' + request_id + '/purchase-orders/' + order_id
+
+            call_url = order_id ? update_url: create_url
+            
+            $.ajax({
+                url: call_url,
+                type: 'POST',
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+                data: {
+                    'item_price_id': item_price_id,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.success_stat == 1) {
+                        window.location.href = '{%url "list_order_requests" %}'
+                    } else {
+                        alert(data.error_message);
+                    }
+                }
+            });
+
+        });
+
+
+    });
+</script>
+{% endblock javascript %}

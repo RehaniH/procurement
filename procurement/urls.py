@@ -29,11 +29,14 @@ urlpatterns = [
     path('requests/', views.ViewRequests.as_view(), name='list_order_requests'), 
     path('requests/<int:pk>/', views.view_order_request, name='view_order_request'), #puchase order view
     path('requests/<int:pk>/purchase-orders', views.create_purchase_order, name='purchase_order_add'), #puchase order view
+
     path('items/', views.ViewItems.as_view(), name='items_catalog'), 
     path('items/add', views.add_items, name='items_add'), 
-    path('items/<int:pk>/prices/add', views.add_prices, name='item_prices_add'), 
     path('items/<int:pk>/prices', views.CreateItemPrices.as_view(), name='item_prices_view'), 
+    path('items/<int:pk>/prices/add', views.add_prices, name='item_prices_add'), 
+    path('items/<int:pk>/prices/delete', views.delete_prices, name='item_prices_remove'), 
     path('purchase-orders/', views.ViewPurchaseOrders.as_view(), name='list_purchase_order'), 
+    path('requests/<int:request_id>/purchase-orders/<int:order_id>', views.update_purchase_order, name='update_purchase_order'), 
    
     path('rulelist/', views.Ruleslist.as_view(), name='rulelist'),
 
