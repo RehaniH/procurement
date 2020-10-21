@@ -32,6 +32,9 @@ class Site(models.Model):
     contact_number = models.CharField(max_length=15)
     budget = models.FloatField
 
+    def __str__(self):
+        return self.name
+
 
 class Supplier(models.Model):
     company_name = models.CharField(max_length=50)
@@ -41,15 +44,15 @@ class Supplier(models.Model):
 
 
 class UserType(models.Model):
-    name = models.CharField(max_length=50)
-    abbv = models.CharField(max_length=13)
+    name =  models.CharField(max_length=50)  
+    abbv =  models.CharField(max_length=13) #MANG #SUPV #SMANG #ACCST
 
     def __str__(self):
         return self.name
 
 
 class Employee(models.Model):
-    user = models.OneToOneField(
+    user = models.OneToOneField(#One to one ? 
         user, on_delete=models.CASCADE, null=True, blank=True)
     firstname = models.CharField(max_length=20)
     lastname = models.CharField(max_length=20)
@@ -73,9 +76,15 @@ class ItemPrices(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     price = models.CharField(max_length=50)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['item', 'supplier', 'price'], name='item_suppliers')
+        ]
+
 
 class Stock(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
     quantity = models.IntegerField(default=0)
     site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True)
     quantity_type = models.CharField(max_length=15)
@@ -94,11 +103,13 @@ class RequestOrders(models.Model):
     quantity = models.IntegerField(null=True)
     expected_date = models.CharField(max_length=50, null=True)
     comment = models.CharField(max_length=50, null=True, blank=True)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True)
-    status = models.ForeignKey(
-        OrderStatus, on_delete=models.CASCADE, null=True)
-    auto_genarated = models.BooleanField(default=False)
-    quantity_type = models.CharField(max_length=50, null=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE,null=True)
+    status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE,null=True)
+    auto_genarated=models.BooleanField(default=False)
+    quantity_type=models.CharField(max_length=50,null=True)
+    
+    def __str__(self):
+        return self.item.name
 
 
 class Orders(models.Model):
@@ -115,7 +126,7 @@ class Orders(models.Model):
         Employee, on_delete=models.CASCADE, null=True, blank=True)
     delivery_date = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
-    request = models.ForeignKey(RequestOrders, on_delete=models.CASCADE)
+    request = models.OneToOneField(RequestOrders, on_delete=models.CASCADE)#make this a one to one feild
     # do we need a comment here as in RequestOrders
 
 

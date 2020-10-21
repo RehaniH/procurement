@@ -1,11 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Requests</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends '../accounts-base.html' %}
+{% block title %}Order Requests{% endblock title %}
+
+{% block stylesheet %}
+
+{% endblock stylesheet %}
+
+{% block content %}
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Order Requests</h1>
+            </div>
+            <br>
+            <br>
+            {% for site in sites_list %}
+            <div class="container bg-light">
+                <h4 class="text-info">{{ site.name }} </h4>
+                <table class="table table-light bg-info">
+                    {% for requestorder in requestorders_list  %}
+                    {% if requestorder.site == site%}
+                    <tbody>
+                        <tr>
+                            <td>#{{ requestorder.id }}</td>
+                            <td class="text-right">{{ requestorder.item.name }} </td>
+                            <td class="text-right">{{ requestorder.quantity }}</td>
+                            <td class="text-right">{{ requestorder.quantity_type }}</td>
+                            <td class="text-right">{{ requestorder.status.status }}</td>
+                            <td class="text-right">{{ requestorder.expected_date }}</td>
+                            <td class="text-right"><a href="{% url 'view_order_request' requestorder.id %}">
+                                    <button class="btn btn-warning" type="button">Open</button>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+    $(function () {
+
+    });
+
+</script>
+{% endblock javascript %}
