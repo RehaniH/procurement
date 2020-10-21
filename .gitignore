@@ -1,3 +1,11 @@
 # Django #
 *.pyc
 db.sqlite3
+
+__pycache__/
+# VS Code #
+.vscode/
+
+#remove pycache #
+
+orders/__pycache__/*.pyc
