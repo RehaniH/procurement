@@ -11,7 +11,8 @@ urlpatterns = [
     path('stock/<int:pk>',views.Stock_detail),
     path('orderList/',views.Order_list),
     path('order/<int:pk>',views.Order_detail),
-    path('items/',views.Item_list)
+    path('items/',views.Item_list),
+    path('reorder/<int:pk>',views.Reorder_level)
     
     
 ]
