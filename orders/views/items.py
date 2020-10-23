@@ -4,17 +4,15 @@ import logging
 from django.utils.datastructures import MultiValueDictKeyError
 from django.http import JsonResponse
 from django.views import generic
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.utils import IntegrityError
-
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from orders.models import (
-    Employee, ItemPrices, Supplier, Item, OrderStatus, RequestOrders, Site, Stock, Orders)
+    ItemPrices, Supplier, Item)
 
 
 logger = logging.getLogger(__name__)
 
-#@login_required
+@method_decorator(login_required, name='dispatch')
 class ViewItems(generic.ListView):
     """View a list of saved catalog items."""
     model = Item
@@ -24,7 +22,6 @@ class ViewItems(generic.ListView):
         context = super().get_context_data(**kwargs)
         context['itemprices_list'] = ItemPrices.objects.all()
         return context
-
 
 def add_items(request):
     """Items are added to database"""
@@ -85,7 +82,7 @@ def add_prices(request, pk):
         data['success_status'] = success_status
         return JsonResponse(data)
 
-
+@method_decorator(login_required, name='dispatch')
 class CreateItemPrices(generic.DetailView):
     """View item prices page"""
     model = Item
@@ -114,3 +111,4 @@ def delete_prices(request, pk):
     finally:
         data['success_status'] = success_status
         return JsonResponse(data)
+
