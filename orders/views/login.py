@@ -35,12 +35,11 @@ def login_web(request):
             return render(request, 'orders/login.html')
 
     else:
-#        logger.error("User is not found: " + username + "  = " + password)
-        data = {
-            'success_status': 0,
-            'error_message': 'Invalid credentials, please try again.'
-            }
-        return JsonResponse(data)
+        logger.error("User is not found: " + username + "  = " + password)
+        context = {
+            'login_error': 'username or password is incorrect.'
+        }
+        return render(request, 'orders/login.html', context)
 
 
 def logout_view(request):
