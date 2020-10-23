@@ -94,14 +94,13 @@
         $('.btn').click(function () {
             
             var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-            item_price_id = $('input[type="radio"][name="item_price_id"]:selected').val()
-
+            var item_price_id = $('input[type="radio"][name="item_price_id"]:checked').val()
             var order_id = '{{ requestorders.orders.id }}'
             var request_id = '{{ requestorders.id }}'
 
             var create_url = "{% url 'purchase_order_add' requestorders.id  %}"
-            var update_url = 'requests/' + request_id + '/purchase-orders/' + order_id
-
+            var update_url =  "{% url 'update_purchase_order' request_id=requestorders.id order_id=999 %}"
+            update_url = update_url.replace('999', order_id)
             call_url = order_id ? update_url: create_url
             
             $.ajax({
@@ -116,7 +115,11 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.success_stat == 1) {
-                        window.location.href = '{%url "list_order_requests" %}'
+                        if(typeof item_price_id != undefined){
+                            window.location.href = '{%url "list_purchase_order" %}'
+                        }else{
+                            window.location.href = '{%url "list_order_requests" %}'
+                        }
                     } else {
                         alert(data.error_message);
                     }
