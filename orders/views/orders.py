@@ -1,19 +1,13 @@
 """The class for logging to server"""
 import logging
 
-from django.shortcuts import render  # , redirect
-from django.utils.datastructures import MultiValueDictKeyError
-from django.views.generic import ListView
 from django.views.generic import View
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 
-from django.shortcuts import render
-# andrew
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import status
-from orders.models import DeliveryLog, Item, OrderStatus, RequestOrders, Site, Stock, Orders
 from orders.serializers import DeliveryLogSerializer, StockSerializer, requestOrdersSerializer
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
@@ -23,14 +17,14 @@ from django.views import generic
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
-from orders.models import Employee
 from rest_framework import generics
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from orders.models import Employee, RequestOrders, Item, ItemPrices, Supplier, Orders, OrderStatus, Site
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db.utils import IntegrityError
-from orders.models import Employee, Rule1, Rule2, Rule3, Pending_orders, Item
+from orders.models import (
+    Employee, Rule1, Rule2, Rule3, Pending_orders,  DeliveryLog, Item, OrderStatus, RequestOrders, Site, Stock, Orders,
+    Item, ItemPrices, Supplier, RequestOrders)
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +61,50 @@ def create_purchase_order(request, pk):
             supplier=supplier
         )
         
+        data = {
+            'id': order.id,
+            'status': order.status.status,
+            'item': order.item.name,
+        }
+        success_status = 1
+    except ObjectDoesNotExist as ex:
+        logger.exception(ex)
+        data = {
+            'error_message': 'The required information does not exists',
+        }
+    except Exception as exception:
+        logger.exception(exception)
+        data = {
+            'error_message': 'Unable to process request',
+        }
+    finally:
+        data['success_stat'] = success_status
+        return JsonResponse(data)
+
+
+def update_purchase_order(request, request_id, order_id ):
+    """update a drafted purchase order"""
+    success_status = 0  # success status is initially set to 0
+    try:
+        item_price_id = request.POST.get('item_price_id', None)
+        order_request = RequestOrders.objects.get(pk=request_id)
+        active = True
+        
+        item_price = ItemPrices.objects.get(pk=item_price_id)
+        supplier = item_price.supplier
+        
+        price = item_price.price
+
+        #saving newly added information to existing order object
+        order = Orders.objects.get(pk=order_id)
+        order.price = price
+        order.status = status
+        order.active = active
+        order.supplier = supplier
+        order.item = order_request.item
+        order.quantity = order_request.quantity
+        order.quantity_type = order_request.quantity_type
+        order.save()
         data = {
             'id': order.id,
             'status': order.status.status,
