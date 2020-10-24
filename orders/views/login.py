@@ -27,7 +27,7 @@ def login_web(request):
         # user.groups.all()[:1].get().name #can use this get the group of user
 
         if(user_group == "Manager" or user_group == "Supervisor"):
-            return redirect('manage')
+            return redirect('rulelist')
         elif(user_group == "Accounting Staff"):
             context = {'item_list': Item.objects.all() }
             return render(request, 'accounting/items-catalog.html', context)

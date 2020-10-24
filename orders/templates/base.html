@@ -45,50 +45,33 @@
           </div>
 
           <span class="logout-spn">
+            <h3 style="color: #fff">Welcome {{user.groups.all.0}}</h3>
+
             <a href="{% url 'logout_view' %}" style="color: #fff">LOGOUT</a>
           </span>
         </div>
       </div>
       <!-- /. NAV TOP  -->
+
       <nav class="navbar-default navbar-side" role="navigation">
         <div class="sidebar-collapse">
           <ul class="nav" id="main-menu">
-            <li>
-              <a href="#"
-                ><i class="fa fa-desktop"></i>Dashboard
-                <span class="badge">Included</span></a
-              >
-            </li>
-
-            <li>
-              <a href="#"
-                ><i class="fa fa-table"></i>UI Elements
-                <span class="badge">Included</span></a
-              >
-            </li>
+            
+            
             <li>
               <a href="{% url 'rulelist'%}"
                 ><i class="fa fa-lock"></i>Rules Management 
                 </a
               >
             </li>
+            <li>
+              <a href="{% url 'manage'%}"
+                ><i class="fa fa-check-circle-o"></i>Approve Requests
+                </a
+              >
+            </li>
 
-            <!-- <li>
-              <a href="#"><i class="fa fa-qrcode"></i>My Link One</a>
-            </li>
-            <li>
-              <a href="#"><i class="fa fa-bar-chart-o"></i>My Link Two</a>
-            </li>
-
-            <li>
-              <a href="#"><i class="fa fa-edit"></i>My Link Three </a>
-            </li>
-            <li>
-              <a href="#"><i class="fa fa-table"></i>My Link Four</a>
-            </li>
-            <li>
-              <a href="#"><i class="fa fa-edit"></i>My Link Five </a>
-            </li> -->
+            
           </ul>
         </div>
       </nav>
