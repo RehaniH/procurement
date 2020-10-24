@@ -3,9 +3,10 @@ import logging
 
 from django.shortcuts import render 
 from django.http import JsonResponse
-
+from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from orders.models import Item
+
 logger = logging.getLogger(__name__)
 
 
@@ -26,8 +27,7 @@ def login_web(request):
         # user.groups.all()[:1].get().name #can use this get the group of user
 
         if(user_group == "Manager" or user_group == "Supervisor"):
-            # replace this with your dashboard
-            return render(request, 'orders/register.html')
+            return redirect('manage')
         elif(user_group == "Accounting Staff"):
             context = {'item_list': Item.objects.all() }
             return render(request, 'accounting/items-catalog.html', context)

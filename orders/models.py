@@ -62,6 +62,10 @@ class Employee(models.Model):
     location = models.ForeignKey(
         Site, on_delete=models.CASCADE, null=True, blank=True)
 
+    def __str__(self):
+        return self.firstname + ' ' + self.lastname
+
+
 
 class Item(models.Model):
     name = models.CharField(max_length=50)
@@ -123,7 +127,7 @@ class Orders(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     approved_by = models.ForeignKey(
-        Employee, on_delete=models.CASCADE, null=True, blank=True)
+        UserType, on_delete=models.CASCADE, null=True, blank=True)
     delivery_date = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
     request = models.OneToOneField(RequestOrders, on_delete=models.CASCADE)#make this a one to one feild
@@ -144,7 +148,7 @@ class Rule2(models.Model):
 
 class Rule3(models.Model):
     rule_code = models.CharField(max_length=15)
-    level = models.IntegerField(default=1, null=False, blank=False)
+    level = models.IntegerField(default=1, null=True, blank=True)
     active_status = models.BooleanField(default=True)
 
 
@@ -158,6 +162,10 @@ class DeliveryLog(models.Model):
 
 class Pending_orders(models.Model):
     orderno = models.ForeignKey(Orders, on_delete=models.CASCADE)
-    Ruletype1 = models.IntegerField(null=True, blank=False)
-    Ruletype2 = models.IntegerField(null=True, blank=False)
-    Ruletype3 = models.IntegerField(null=True, blank=False)
+    Ruletype1 = models.IntegerField(default=0,null=False, blank=False)
+    Ruletype2 = models.IntegerField(default=0,null=False, blank=False)
+    Ruletype3 = models.IntegerField(default=0,null=False, blank=False)
+    DeleteRequest = models.IntegerField(default=0,null=False, blank=False)
+    EditRequest = models.IntegerField(default=0,null=False, blank=False)
+    approved = models.IntegerField(default=0,null=False,blank=False)
+

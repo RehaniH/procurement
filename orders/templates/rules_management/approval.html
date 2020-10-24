@@ -1,0 +1,221 @@
+{% extends '../base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% block title %}Management Approvals{% endblock %}
+
+{% block content %}
+<div id="page-wrapper">
+  <div id="page-inner">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Pending Approvals</h1>
+        <button class="btn btn-primary pull-right" id="reload" name="reload"><i class="fa fa-refresh"></i></button>
+      </div>
+    </div>
+   <br>
+
+   <!-- Manager Approvals -->
+   <h4>Manager Approvals</h4>
+   <table class="table table-striped">
+    <th>Order ID</th>
+    <th>Item Name</th>
+    <th>Total Amount</th>
+    <th>Manager Approval</th>
+
+
+  <tbody>
+    {% for orders in p_orders_r3 %}
+
+    <tr>
+      <td>{{orders.orderno.id}}</td>
+      <td>{{orders.orderno.item.name}}</td>
+      <td>{{orders.orderno.quantity|mul:orders.orderno.price}}</td>
+      
+
+      <td>
+        {% if user.groups.all.0.name == 'Manager' %}
+
+        
+            {% if orders.Ruletype3 == 2 %}
+
+            <button data-id="{{orders.id}}" class="btn btn-success" id="managerApprove" name="managerApprove"><i class="fa fa-check"></i></button>
+            <button data-id="{{orders.id}}" class="btn btn-danger" id="mangerDecline" name="mangerDecline"><i class="fa fa-ban"></i></button>
+            {% else %}
+            <span class="badge badge-success">Cleared</span>
+            {% endif %}
+
+        {% endif %}
+     
+      </td>
+      
+
+    </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+   <!-- Items approval -->
+   <h4>Item Approvals</h4>
+    <table class="table table-striped">
+      <th>Order ID</th>
+      <th>Item Name</th>
+      <th>Total Amount</th>
+      <th>Item Approval</th>
+      
+
+
+    <tbody>
+      {% for orders in p_orders_r1 %}
+
+      <tr>
+        <td>{{orders.orderno.id}}</td>
+        <td>{{orders.orderno.item.name}}</td>
+        <td>{{orders.orderno.quantity|mul:orders.orderno.price}}</td>
+        <td>
+          {% if orders.Ruletype1 == True %}
+          <button data-id="{{orders.id}}" class="btn btn-success" id="itemApprove" name="itemApprove"><i class="fa fa-check"></i></button>
+          <button data-id="{{orders.id}}" class="btn btn-danger" id="itemDecline" name="itemDecline" ><i class="fa fa-ban"></i></button>
+          {% else %}
+          <span class="badge badge-success">Cleared</span>
+          {% endif %}
+
+
+        </td>
+        
+        
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+    <!-- Price approval  -->
+    <h4>Price Limit Approval</h4>
+    <table class="table table-striped">
+      <th>Order ID</th>
+      <th>Item Name</th>
+      <th>Total Amount</th>
+      <th>Price Approval</th>
+      
+
+
+    <tbody>
+      {% for orders in p_orders_r2 %}
+
+      <tr>
+        <td>{{orders.orderno.id}}</td>
+        <td>{{orders.orderno.item.name}}</td>
+        <td>{{orders.orderno.quantity|mul:orders.orderno.price}}</td>
+        
+        <td>
+          {% if orders.Ruletype2 == True %}
+
+          <button data-id="{{orders.id}}" class="btn btn-success" id="priceApprove" name="priceApprove"><i class="fa fa-check"></i></button>
+          <button data-id="{{orders.id}}" class="btn btn-danger" id="priceDecline" name="priceDecline"><i class="fa fa-ban"></i></button>
+          {% else %}
+          <span class="badge badge-success">Cleared</span>
+          {% endif %}
+
+
+        </td>
+        
+        
+
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+
+    <!-- Edit Requests -->
+    <h4>Edit Requests Approvals</h4>
+    <table class="table table-striped">
+      <th>Order ID</th>
+      <th>Item Name</th>
+      <th>Total Amount</th>
+      
+      <th>Edit Requests</th>
+      
+
+
+    <tbody>
+      {% for orders in p_orders_ed %}
+
+      <tr>
+        <td>{{orders.orderno.id}}</td>
+        <td>{{orders.orderno.item.name}}</td>
+        <td>{{orders.orderno.quantity|mul:orders.orderno.price}}</td>
+        
+        <td>
+          {% if orders.EditRequest == True %}
+
+          <button data-id="{{orders.id}}" class="btn btn-success" id="editApprove" name="editApprove"><i class="fa fa-check"></i></button>
+          <button data-id="{{orders.id}}" class="btn btn-danger" id="editDecline" name="editDecline"><i class="fa fa-ban"></i></button>
+          {% else %}
+          <span class="badge badge-success">Cleared</span>
+          {% endif %}
+
+
+        </td>
+        
+        
+
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+
+    <!-- Delete Requests -->
+    <h4>Delete Request Approvals</h4>
+    <table class="table table-striped">
+      <th>Order ID</th>
+      <th>Item Name</th>
+      <th>Total Amount</th>
+      
+      <th>Delete Requests</th>
+
+
+    <tbody>
+      {% for orders in p_orders_del %}
+
+      <tr>
+        <td>{{orders.orderno.id}}</td>
+        <td>{{orders.orderno.item.name}}</td>
+        <td>{{orders.orderno.quantity|mul:orders.orderno.price}}</td>
+       
+       
+        <td>
+          {% if orders.DeleteRequest == True %}
+
+          <button data-id="{{orders.id}}" class="btn btn-success" id="deleteApprove" name="deleteApprove"><i class="fa fa-check"></i></button>
+          <button data-id="{{orders.id}}" class="btn btn-danger" id="deleteDecline" name="deleteDecline"><i class="fa fa-ban"></i></button>
+          {% else %}
+          <span class="badge badge-success">Cleared</span>
+          {% endif %}
+
+
+        </td>
+
+        
+
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+
+
+    <!-- <p>{{ user_obj }}</p> -->
+
+    
+
+   
+
+
+    <!-- /. ROW  -->
+  </div>
+  <!-- /. PAGE INNER  -->
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+
+
+{% endblock javascript %}
