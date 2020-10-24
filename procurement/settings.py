@@ -25,12 +25,13 @@ SECRET_KEY = '=u!ie6t4f$@j=6isl@sp82%%a9b@4gdaf8hjkkxlxq)zoldnf('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ 'rehani.pythonanywhere.com' ]
+ALLOWED_HOSTS = ['rehani.pythonanywhere.com']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'mathfilters',
     'orders',
     'rest_framework',
     'corsheaders',
