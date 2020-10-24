@@ -12,12 +12,10 @@ from orders.serializers import DeliveryLogSerializer, StockSerializer, requestOr
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-from django.contrib.auth.models import Permission, User
 
 
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
-from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
@@ -25,6 +23,9 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db.utils import IntegrityError
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
 from orders.models import (
     Employee, Rule1, Rule2, Rule3, Pending_orders,  DeliveryLog, Item, OrderStatus, RequestOrders, Site, Stock, Orders,
     Item, ItemPrices, Supplier, RequestOrders)
@@ -127,7 +128,7 @@ def update_purchase_order(request, request_id, order_id ):
         data['success_stat'] = success_status
         return JsonResponse(data)
 
-
+@method_decorator(login_required, name='dispatch')
 class Ruleslist(generic.ListView):
     """Add new Rules to system or activate or deactivate them"""
     model = Pending_orders
@@ -147,7 +148,9 @@ class Ruleslist(generic.ListView):
 
         return context
 
+@method_decorator(login_required, name='dispatch')
 class Approvals(generic.ListView):
+    """Get Management staff approval"""
     model = Pending_orders
     template_name = 'rules_management/approval.html'
     context_object_name = 'approvals'
@@ -163,14 +166,14 @@ class Approvals(generic.ListView):
             'p_orders_r3': Pending_orders.objects.filter(approved=0,Ruletype3=2),
             'p_orders_ed': Pending_orders.objects.filter(approved=0,EditRequest=1),
             'p_orders_del': Pending_orders.objects.filter(approved=0,DeleteRequest=1),
-            # 'user_obj': User.groups.all()[:1].get().name,
-
-            # 'more_context': Model.objects.all(),
+            
         })
 
         return context
 
 def manage_approvals(request):
+    """Filter orders according to Company Rules"""
+
     rule_1=Rule1.objects.filter(active_status=True)
     rule_2=Rule2.objects.filter(active_status=True)
     rule_3=Rule3.objects.filter(active_status=True)
@@ -186,13 +189,11 @@ def manage_approvals(request):
         if  obj_not_exist:
             p.DeleteRequest=1
             p.save()
-            print('delete object does not exist so I created')
           
         else:
             obj_exist=Pending_orders.objects.get(orderno_id=object.id)
             obj_exist.DeleteRequest=1
             obj_exist.save()
-            print('delete object exist')
 
     for object in edit_requests:
         p,obj_not_exist=Pending_orders.objects.get_or_create(orderno=object)
@@ -200,18 +201,15 @@ def manage_approvals(request):
         if  obj_not_exist:
             p.EditRequest=1
             p.save()
-            print('edit object does not exist so created')
 
         else:
             obj_exist=Pending_orders.objects.get(orderno_id=object.id)
             obj_exist.EditRequest=1
             obj_exist.save()
-            print('Edit object exist')
 
     for object in pending_requests:
         is_rule1=False
         is_rule2=False
-        # print(object.item.id)
 
         if rule_1:
             for rule in rule_1:
@@ -222,13 +220,11 @@ def manage_approvals(request):
                     if  obj_not_exist:
                         p.Ruletype1=1
                         p.save()
-                        # print('rule type 1 object does not exist so created')
 
                     else:
                         obj_exist=Pending_orders.objects.get(orderno_id=object.id)
                         obj_exist.Ruletype1=1
                         obj_exist.save()
-                        # print('rule type 1 object exist')
         if rule_2:
             for rule in rule_2:
                 
@@ -240,32 +236,25 @@ def manage_approvals(request):
                     if  obj_not_exist:
                         p.Ruletype2=1
                         p.save()
-                        # print('rule type 2 object does not exist so created')
 
                     else:
                         obj_exist=Pending_orders.objects.get(orderno_id=object.id)
                         obj_exist.Ruletype2=1
                         obj_exist.save()
-                        # print('rule type 2 object exist')
-                
-        # a=object.id 
-        # print('object Id:'+str(a)+' rule 1 status:'+str(is_rule1)+' rule 2 status: '+str(is_rule2))
+                        
 
         
         if(is_rule1==True and is_rule2==True):
-            # print('supervisor and manger')
             p,obj_not_exist=Pending_orders.objects.get_or_create(orderno=object)
 
             if  obj_not_exist:
                 p.Ruletype3=2
                 p.save()
-                # print('rule type 3 object does not exist so created M & S')
 
             else:
                 obj_exist=Pending_orders.objects.get(orderno_id=object.id)
                 obj_exist.Ruletype3=2
                 obj_exist.save()
-                # print('rule type 3 object exist M & S')
 
         elif(is_rule1==False and is_rule2==False):
             order_approved=Orders.objects.get(id__exact=object.id)
@@ -274,23 +263,9 @@ def manage_approvals(request):
             order_approved.save()
 
 
-            # print('approved')
-        # else:
-            # p,obj_not_exist=Pending_orders.objects.get_or_create(orderno=object)
-
-            # if  obj_not_exist:
-            #     p.Ruletype3=1
-            #     p.save()
-                # print('rule type 3 object does not exist so created M & S')
-
-            # else:
-            #     obj_exist=Pending_orders.objects.get(orderno_id=object.id)
-            #     obj_exist.Ruletype3=1
-            #     obj_exist.save()
-                # print('rule type 3 object exist M & S')
+            
             
 
-    # return render(request, "rules_management/approval.html")
     data = {
             'postitive': 2
         }
@@ -302,6 +277,7 @@ def manage_approvals(request):
 
 
 class AddItemRule(View):
+    """Add new Item Rule"""
     def get(self, request):
         rulecode = request.GET.get('rulecode', None)
         itemid = request.GET.get('itemid', None)
@@ -319,14 +295,13 @@ class AddItemRule(View):
 
 
 def getItemRule(request):
-
+    """update status of item rule"""
     status_id = request.GET.get('id', None)
     print(status_id)
     obj = Rule1.objects.get(id=status_id)
     realstatus = obj.active_status
 
     if(realstatus == True):
-        print('inside true')
         obj.active_status = 0
         obj.save()
         data = {
@@ -335,7 +310,6 @@ def getItemRule(request):
         return JsonResponse(data)
 
     else:
-        print('inside true')
 
         obj.active_status = 1
         obj.save()
@@ -346,13 +320,14 @@ def getItemRule(request):
 
 
 class AddPriceRule(View):
+    """Add new Price limit"""
+
     def get(self, request):
 
         ruleid = request.GET.get('ruleid', None)
         price = request.GET.get('priceLimit', None)
 
-        print(price)
-        print(ruleid)
+        
 
         obj = Rule2.objects.get(id=ruleid)
         obj.price_limit = price
@@ -362,13 +337,13 @@ class AddPriceRule(View):
 
 
 def getPriceRule(request):
+    """change price limit status """
+
     status_id = request.GET.get('id', None)
-    print(status_id)
     obj = Rule2.objects.get(id=status_id)
     realstatus = obj.active_status
 
     if(realstatus == True):
-        print('inside true')
         obj.active_status = 0
         obj.save()
         data = {
@@ -377,7 +352,6 @@ def getPriceRule(request):
         return JsonResponse(data)
 
     else:
-        print('inside true')
 
         obj.active_status = 1
         obj.save()
@@ -388,13 +362,14 @@ def getPriceRule(request):
 
 
 class AddlevelRule(View):
+    """Add new Level rule"""
+
     def get(self, request):
 
         ruleid = request.GET.get('ruleid1', None)
         level = request.GET.get('level', None)
 
-        print(level)
-        print(ruleid)
+        
 
         obj = Rule3.objects.get(id=ruleid)
         obj.level = level
@@ -404,13 +379,12 @@ class AddlevelRule(View):
 
 
 def getlevelRule(request):
+    """Change level rule status"""
     status_id = request.GET.get('id', None)
-    print(status_id)
     obj = Rule3.objects.get(id=status_id)
     realstatus = obj.active_status
 
     if(realstatus == True):
-        print('inside true')
         obj.active_status = 0
         obj.save()
         data = {
@@ -419,7 +393,6 @@ def getlevelRule(request):
         return JsonResponse(data)
 
     else:
-        print('inside true')
 
         obj.active_status = 1
         obj.save()
@@ -430,7 +403,7 @@ def getlevelRule(request):
 
 
 def status_rule_one(request):
-
+    """Approve or decline according to item rule"""
     status_id = request.GET.get('id', None)
     status = request.GET.get('status', None)
     
@@ -447,7 +420,6 @@ def status_rule_one(request):
         DeleteRequest=0,
         EditRequest=0,
         )
-        print("order id rule1 status changed "+str(obj.id))
 
 
         if suitable_object:
@@ -459,7 +431,6 @@ def status_rule_one(request):
             order_approved.status=status
             order_approved.save()
 
-            print("order id "+str(order_approved.id)+" approved")
 
         data = {
             'status': True
@@ -475,9 +446,8 @@ def status_rule_one(request):
         order_declined=Orders.objects.get(id__exact=obj.orderno_id)
         status = OrderStatus.objects.get(abbv="DECL")
         order_declined.status=status
+        order_declined.active=False
         order_declined.save()
-
-        print("order id "+str(order_declined.id)+" declined")
 
         data = {
             'status': False
@@ -485,7 +455,7 @@ def status_rule_one(request):
         return JsonResponse(data)
         
 def status_rule_two(request):
-
+    """Approve or decline according to price limit rule"""
     status_id = request.GET.get('id', None)
     status = request.GET.get('status', None)
     
@@ -502,7 +472,6 @@ def status_rule_two(request):
         DeleteRequest=0,
         EditRequest=0,
         )
-        print("order id rule2 status changed "+str(obj.id))
 
 
         if suitable_object:
@@ -514,7 +483,6 @@ def status_rule_two(request):
             order_approved.status=status
             order_approved.save()
 
-            print("order id "+str(order_approved.id)+" approved")
 
         data = {
             'status': True
@@ -530,9 +498,9 @@ def status_rule_two(request):
         order_declined=Orders.objects.get(id__exact=obj.orderno_id)
         status = OrderStatus.objects.get(abbv="DECL")
         order_declined.status=status
+        order_declined.active=False
         order_declined.save()
 
-        print("order id "+str(order_declined.id)+" declined")
 
         data = {
             'status': False
@@ -540,7 +508,7 @@ def status_rule_two(request):
         return JsonResponse(data)
 
 def status_rule_three(request):
-
+    """Approve or decline according to levels"""
     status_id = request.GET.get('id', None)
     status = request.GET.get('status', None)
     
@@ -581,9 +549,9 @@ def status_rule_three(request):
         order_declined=Orders.objects.get(id__exact=obj.orderno_id)
         status = OrderStatus.objects.get(abbv="DECL")
         order_declined.status=status
+        order_declined.active=False
         order_declined.save()
 
-        print("order id "+str(order_declined.id)+" declined")
 
         data = {
             'status': False
@@ -591,10 +559,9 @@ def status_rule_three(request):
         return JsonResponse(data)
 
 def status_edit_requests(request):
-
+    """Approve or decline according to Edit Requests"""
     status_id = request.GET.get('id', None)
     status = request.GET.get('status', None)
-    print(status)
     if(status == '1'):
         obj = Pending_orders.objects.get(id=status_id)
         obj.EditRequest=0
@@ -605,7 +572,6 @@ def status_edit_requests(request):
         order_approved.status=status
         order_approved.save()
 
-        # print("order id edit req status changed "+str(obj.id))
         data = {
             'status': True
         }
@@ -620,10 +586,9 @@ def status_edit_requests(request):
         order_declined=Orders.objects.get(id__exact=obj.orderno_id)
         status = OrderStatus.objects.get(abbv="DECL")
         order_declined.status=status
+        order_declined.active=False
         order_declined.save()
 
-        # print("order id "+str(order_declined.id)+" declined")
-        print('in false')
 
         data = {
             'status': False
@@ -631,10 +596,9 @@ def status_edit_requests(request):
         return JsonResponse(data)
 
 def status_delete_requests(request):
-
+    """Approve or decline according to Delete Requests"""
     status_id = request.GET.get('id', None)
     status = request.GET.get('status', None)
-    # print(status)
     if(status == '1'):
         obj = Pending_orders.objects.get(id=status_id)
         obj.DeleteRequest=0
@@ -645,7 +609,6 @@ def status_delete_requests(request):
         order_approved.status=status
         order_approved.save()
 
-        # print("order id edit req status changed "+str(obj.id))
         data = {
             'status': True
         }
@@ -660,10 +623,9 @@ def status_delete_requests(request):
         order_declined=Orders.objects.get(id__exact=obj.orderno_id)
         status = OrderStatus.objects.get(abbv="DECL")
         order_declined.status=status
+        order_declined.active=False
         order_declined.save()
 
-        # print("order id "+str(order_declined.id)+" declined")
-        print('in false')
 
         data = {
             'status': False

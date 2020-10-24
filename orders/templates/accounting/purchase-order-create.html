@@ -20,7 +20,7 @@
                         <h5>Request Id : #{{ requestorders.id }}</h5>
                     </div>
                     <div class="col-md-4">
-                        <h5>Requestee : {{ requestorders.site.employee }}</h5>
+                        <h5>Requestee : {{ requestorders.site.employee_set.all.0 }}</h5>
                     </div>
                     <div class="col-md-4">
                         <h5>Site : {{ requestorders.site.name }}</h5>

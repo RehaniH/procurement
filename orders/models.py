@@ -62,6 +62,10 @@ class Employee(models.Model):
     location = models.ForeignKey(
         Site, on_delete=models.CASCADE, null=True, blank=True)
 
+    def __str__(self):
+        return self.firstname + ' ' + self.lastname
+
+
 
 class Item(models.Model):
     name = models.CharField(max_length=50)
