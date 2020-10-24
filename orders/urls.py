@@ -8,7 +8,7 @@ urlpatterns = [
     path('deliveryloglist/',views.DeliveryLog_list),
     path('deliverylog/<int:pk>',views.DeliveryLog_detail),
     path('stockList/',views.Stock_list),
-    path('stock/<int:pk>',views.Stock_detail),
+    path('stock',views.Stock_detail),
     path('orderList/',views.Order_list),
     path('order/<int:pk>',views.Order_detail),
     path('items/',views.Item_list),
