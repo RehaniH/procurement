@@ -1,31 +1,11 @@
 """The class for logging to server"""
 import logging
 
-from django.shortcuts import render  # , redirect
-from django.utils.datastructures import MultiValueDictKeyError
-from django.views.generic import ListView
-from django.views.generic import View
+from django.shortcuts import render 
 from django.http import JsonResponse
-from django.http import HttpResponseRedirect
 
-from django.shortcuts import render
-from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser
-from rest_framework import status
 from django.contrib.auth import authenticate, login, logout
-from django.views import generic
-from django.contrib.auth.models import Permission, User
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
-from orders.models import Employee
-from rest_framework import generics
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from orders.models import Employee, RequestOrders, Item, ItemPrices, Supplier, Orders, OrderStatus, Site
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.db.utils import IntegrityError
-from orders.models import Employee, Rule1, Rule2, Rule3, Pending_orders, Item
-
+from orders.models import Item
 logger = logging.getLogger(__name__)
 
 
@@ -37,8 +17,8 @@ def index(request):
 
 def login_web(request):
     """Authenticating a login request."""
-    username = request.POST.get('username')
-    password = request.POST.get('password')
+    username = request.POST.get('username', None)
+    password = request.POST.get('password', None)
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
@@ -49,16 +29,17 @@ def login_web(request):
             # replace this with your dashboard
             return render(request, 'orders/register.html')
         elif(user_group == "Accounting Staff"):
-            return render(request, 'accounting/dashboard.html')
+            context = {'item_list': Item.objects.all() }
+            return render(request, 'accounting/items-catalog.html', context)
         else:
             return render(request, 'orders/login.html')
 
     else:
         logger.error("User is not found: " + username + "  = " + password)
-        data = {'Employee': 'error'}
-        return JsonResponse(data)
-
-# logging out a logged in user
+        context = {
+            'login_error': 'username or password is incorrect.'
+        }
+        return render(request, 'orders/login.html', context)
 
 
 def logout_view(request):
