@@ -233,9 +233,9 @@ def Stock_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def Stock_detail(request, pk):
+def Stock_detail(request):
     try: 
-        Stocks = Stock.objects.get(pk=pk) 
+        Stocks = Stock.objects.all() 
     except Stock.DoesNotExist: 
         return JsonResponse({'message': 'The stock does not exist'}, status=status.HTTP_404_NOT_FOUND) 
  
@@ -247,8 +247,13 @@ def Stock_detail(request, pk):
         Stock_data = JSONParser().parse(request) 
         print(Stock_data)
         qnty=Stock_data['quantity']
+        item1=Stock_data['item']
+        itemobj=Item.objects.get(name__iexact=item1)
+        print(itemobj)
+
         print(qnty)
-        obj1=Stock.objects.get(id=pk)
+
+        obj1=Stock.objects.get(item=itemobj)
         obj1.quantity=qnty
         obj1.save()      
         
@@ -258,7 +263,7 @@ def Stock_detail(request, pk):
         statusobj=OrderStatus.objects.get(status__iexact='reorder item')
         
         print(orderobj)
-        if(qnty<=Stocks.reorder_level):
+        if(qnty<=obj1.reorder_level):
             obj=RequestOrders.objects.create(
                 item=orderobj,
                 status=statusobj,
@@ -273,10 +278,7 @@ def Stock_detail(request, pk):
             return JsonResponse(Stock_serializer.data) 
         return JsonResponse(Stock_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
  
-    elif request.method == 'DELETE': 
-        Stocks.delete() 
-        return JsonResponse({'message': 'Stock was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-
+  
 #Stock
 @api_view(['GET', 'POST', 'DELETE'])
 def Order_list(request):
