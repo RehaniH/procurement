@@ -163,5 +163,5 @@ class Pending_orders(models.Model):
     Ruletype3 = models.IntegerField(default=0,null=False, blank=False)
     DeleteRequest = models.IntegerField(default=0,null=False, blank=False)
     EditRequest = models.IntegerField(default=0,null=False, blank=False)
-    approved = models.BooleanField(default=False,null=False,blank=False)
+    approved = models.IntegerField(default=0,null=False,blank=False)
 

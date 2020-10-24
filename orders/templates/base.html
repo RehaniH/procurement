@@ -240,6 +240,364 @@
           }
         }); 
       });
+      //retrive ne pending requests
+      $('#reload').on('click', function(e){
+        e.preventDefault();
+        
+        $.ajax({
+          url:'{% url "getdata" %}',
+          data: {
+              id: 1
+          },
+          method: 'get',
+          error: function (e){
+            alert('error');
+            
+          },
+          beforeSend:function (){
+            $('#reload').text('Loading...');
+            
+          },
+          success: function (data){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);   
+
+          
+          }
+        }); 
+      });
+
+      //Approve item Rule
+      $("[name='itemApprove']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=1;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "itemrule" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==true){
+            console.log('Approved');
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          
+          }
+          
+          
+          }
+        }); 
+      });
+
+       //decline item Rule
+       $("[name='itemDecline']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=2;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "itemrule" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==false){
+          console.log('Decliclined');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //approve price rule
+      $("[name='priceApprove']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=1;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "pricerule" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==true){
+          console.log('Decliclined');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //decline price rule
+      $("[name='priceDecline']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=2;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "pricerule" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==false){
+          console.log('Decliclined');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //Edit requests approve
+      $("[name='editApprove']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=1;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "editrequest" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==true){
+          console.log('approved');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //Edit requests decline
+      $("[name='editDecline']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=2;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "editrequest" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==false){
+          console.log('Decliclined');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //delete requests approve
+      $("[name='deleteApprove']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=1;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "deleterequest" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==true){
+          console.log('approved');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //delete requests decline
+      $("[name='deleteDecline']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=2;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "deleterequest" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==false){
+          console.log('Decliclined');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //manager requests approve
+      $("[name='managerApprove']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=1;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "managerapprove" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==true){
+          console.log('approved');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
+
+      //manager requests decline
+      $("[name='mangerDecline']").on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var status=2;
+        console.log(id);
+  
+        $.ajax({
+          url:'{% url "managerapprove" %}',
+          data: {
+              id: id,
+              status:status
+          },
+          method: 'get',
+          error: function (e){
+            setTimeout(function() {
+              window.location.reload();
+          }, 500);
+          },
+          success: function (data){
+          if(data.status==false){
+          console.log('Decliclined');
+          setTimeout(function() {
+            window.location.reload();
+        }, 500);
+          
+          }
+          
+          }
+        }); 
+      });
 
      
     </script>

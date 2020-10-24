@@ -47,7 +47,20 @@ urlpatterns = [
     path('rules/rule3', views.AddlevelRule.as_view(), name='rule3add'),
     path('rule1status/rule3status', views.getlevelRule, name='rule3status'),
 
-    path('manage/', views.manage_approvals, name='manageApprovals'),
+    path('getdata/', views.manage_approvals, name='getdata'),
+    path('manage/', views.Approvals.as_view(), name='manage'),
+
+    path('itemrule/', views.status_rule_one, name='itemrule'),
+    path('pricerule/', views.status_rule_two, name='pricerule'),
+    path('editrequest/', views.status_edit_requests, name='editrequest'),
+    path('deleterequest/', views.status_delete_requests, name='deleterequest'),
+    path('managerapprove/', views.status_rule_three, name='managerapprove'),
+
+
+
+
+
+
 
 
     url('apis/', include('orders.urls')),

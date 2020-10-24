@@ -11,6 +11,9 @@ from rest_framework import status
 from orders.serializers import DeliveryLogSerializer, StockSerializer, requestOrdersSerializer
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render
+from django.contrib.auth.models import Permission, User
+
 
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
@@ -127,17 +130,42 @@ def update_purchase_order(request, request_id, order_id ):
 
 
 class Ruleslist(generic.ListView):
+    """Add new Rules to system or activate or deactivate them"""
     model = Pending_orders
     template_name = 'rules_management/rulesList.html'
     context_object_name = 'listdata'
 
     def get_context_data(self, **kwargs):
+        
         context = super(Ruleslist, self).get_context_data(**kwargs)
         context.update({
             'rule1': Rule1.objects.select_related('item'),
             'rule2': Rule2.objects.all(),
             'rule3': Rule3.objects.all(),
             'items': Item.objects.all(),
+            # 'more_context': Model.objects.all(),
+        })
+
+        return context
+
+class Approvals(generic.ListView):
+    model = Pending_orders
+    template_name = 'rules_management/approval.html'
+    context_object_name = 'approvals'
+    
+
+    def get_context_data(self, **kwargs):
+        u=self.request.user
+        print(u)
+        context = super(Approvals, self).get_context_data(**kwargs)
+        context.update({
+            'p_orders_r1': Pending_orders.objects.filter(approved=0,Ruletype1=1),
+            'p_orders_r2': Pending_orders.objects.filter(approved=0,Ruletype2=1),
+            'p_orders_r3': Pending_orders.objects.filter(approved=0,Ruletype3=2),
+            'p_orders_ed': Pending_orders.objects.filter(approved=0,EditRequest=1),
+            'p_orders_del': Pending_orders.objects.filter(approved=0,DeleteRequest=1),
+            # 'user_obj': User.groups.all()[:1].get().name,
+
             # 'more_context': Model.objects.all(),
         })
 
@@ -248,22 +276,27 @@ def manage_approvals(request):
 
 
             # print('approved')
-        else:
-            p,obj_not_exist=Pending_orders.objects.get_or_create(orderno=object)
+        # else:
+            # p,obj_not_exist=Pending_orders.objects.get_or_create(orderno=object)
 
-            if  obj_not_exist:
-                p.Ruletype3=1
-                p.save()
+            # if  obj_not_exist:
+            #     p.Ruletype3=1
+            #     p.save()
                 # print('rule type 3 object does not exist so created M & S')
 
-            else:
-                obj_exist=Pending_orders.objects.get(orderno_id=object.id)
-                obj_exist.Ruletype3=1
-                obj_exist.save()
+            # else:
+            #     obj_exist=Pending_orders.objects.get(orderno_id=object.id)
+            #     obj_exist.Ruletype3=1
+            #     obj_exist.save()
                 # print('rule type 3 object exist M & S')
             
 
-    return render(request, "rules_management/approval.html") 
+    # return render(request, "rules_management/approval.html")
+    data = {
+            'postitive': 2
+        }
+    return JsonResponse(data)
+
 
     
 
@@ -397,3 +430,243 @@ def getlevelRule(request):
         return JsonResponse(data)
 
 
+def status_rule_one(request):
+
+    status_id = request.GET.get('id', None)
+    status = request.GET.get('status', None)
+    
+    if(status == '1'):
+        obj = Pending_orders.objects.get(id=status_id)
+        obj.Ruletype1=0
+        obj.save()
+
+        suitable_object=Pending_orders.objects.get(
+        id=status_id,
+        Ruletype1=0,
+        Ruletype2=0,
+        Ruletype3=0,
+        DeleteRequest=0,
+        EditRequest=0,
+        )
+        print("order id rule1 status changed "+str(obj.id))
+
+
+        if suitable_object:
+            suitable_object.approved=1
+            suitable_object.save()
+
+            order_approved=Orders.objects.get(id__exact=suitable_object.orderno_id)
+            status = OrderStatus.objects.get(abbv="APPV")
+            order_approved.status=status
+            order_approved.save()
+
+            print("order id "+str(order_approved.id)+" approved")
+
+        data = {
+            'status': True
+        }
+        return JsonResponse(data)
+
+
+    else:
+        obj=Pending_orders.objects.get(id=status_id)
+        obj.approved=2
+        obj.save()
+
+        order_declined=Orders.objects.get(id__exact=obj.orderno_id)
+        status = OrderStatus.objects.get(abbv="DECL")
+        order_declined.status=status
+        order_declined.save()
+
+        print("order id "+str(order_declined.id)+" declined")
+
+        data = {
+            'status': False
+        }
+        return JsonResponse(data)
+        
+def status_rule_two(request):
+
+    status_id = request.GET.get('id', None)
+    status = request.GET.get('status', None)
+    
+    if(status == '1'):
+        obj = Pending_orders.objects.get(id=status_id)
+        obj.Ruletype2=0
+        obj.save()
+
+        suitable_object=Pending_orders.objects.get(
+        id=status_id,
+        Ruletype1=0,
+        Ruletype2=0,
+        Ruletype3=0,
+        DeleteRequest=0,
+        EditRequest=0,
+        )
+        print("order id rule2 status changed "+str(obj.id))
+
+
+        if suitable_object:
+            suitable_object.approved=1
+            suitable_object.save()
+
+            order_approved=Orders.objects.get(id__exact=suitable_object.orderno_id)
+            status = OrderStatus.objects.get(abbv="APPV")
+            order_approved.status=status
+            order_approved.save()
+
+            print("order id "+str(order_approved.id)+" approved")
+
+        data = {
+            'status': True
+        }
+        return JsonResponse(data)
+
+
+    else:
+        obj=Pending_orders.objects.get(id=status_id)
+        obj.approved=2
+        obj.save()
+
+        order_declined=Orders.objects.get(id__exact=obj.orderno_id)
+        status = OrderStatus.objects.get(abbv="DECL")
+        order_declined.status=status
+        order_declined.save()
+
+        print("order id "+str(order_declined.id)+" declined")
+
+        data = {
+            'status': False
+        }
+        return JsonResponse(data)
+
+def status_rule_three(request):
+
+    status_id = request.GET.get('id', None)
+    status = request.GET.get('status', None)
+    
+    if(status == '1'):
+        obj = Pending_orders.objects.get(id=status_id)
+        obj.Ruletype3=0
+        obj.save()
+
+        suitable_object=Pending_orders.objects.get(
+        id=status_id,
+        Ruletype1=0,
+        Ruletype2=0,
+        Ruletype3=0,
+        DeleteRequest=0,
+        EditRequest=0,
+        )
+
+        if suitable_object:
+            suitable_object.approved=1
+            suitable_object.save()
+
+            order_approved=Orders.objects.get(id__exact=suitable_object.orderno_id)
+            status = OrderStatus.objects.get(abbv="APPV")
+            order_approved.status=status
+            order_approved.save()
+
+        data = {
+            'status': True
+        }
+        return JsonResponse(data)
+
+
+    else:
+        obj=Pending_orders.objects.get(id=status_id)
+        obj.approved=2
+        obj.save()
+
+        order_declined=Orders.objects.get(id__exact=obj.orderno_id)
+        status = OrderStatus.objects.get(abbv="DECL")
+        order_declined.status=status
+        order_declined.save()
+
+        print("order id "+str(order_declined.id)+" declined")
+
+        data = {
+            'status': False
+        }
+        return JsonResponse(data)
+
+def status_edit_requests(request):
+
+    status_id = request.GET.get('id', None)
+    status = request.GET.get('status', None)
+    print(status)
+    if(status == '1'):
+        obj = Pending_orders.objects.get(id=status_id)
+        obj.EditRequest=0
+        obj.save()
+
+        order_approved=Orders.objects.get(id__exact=obj.orderno_id)
+        status = OrderStatus.objects.get(abbv="PEND")
+        order_approved.status=status
+        order_approved.save()
+
+        # print("order id edit req status changed "+str(obj.id))
+        data = {
+            'status': True
+        }
+        return JsonResponse(data)
+
+
+    else:
+        obj=Pending_orders.objects.get(id=status_id)
+        obj.approved=2
+        obj.save()
+
+        order_declined=Orders.objects.get(id__exact=obj.orderno_id)
+        status = OrderStatus.objects.get(abbv="DECL")
+        order_declined.status=status
+        order_declined.save()
+
+        # print("order id "+str(order_declined.id)+" declined")
+        print('in false')
+
+        data = {
+            'status': False
+        }
+        return JsonResponse(data)
+
+def status_delete_requests(request):
+
+    status_id = request.GET.get('id', None)
+    status = request.GET.get('status', None)
+    # print(status)
+    if(status == '1'):
+        obj = Pending_orders.objects.get(id=status_id)
+        obj.DeleteRequest=0
+        obj.save()
+
+        order_approved=Orders.objects.get(id__exact=obj.orderno_id)
+        status = OrderStatus.objects.get(abbv="DELET")
+        order_approved.status=status
+        order_approved.save()
+
+        # print("order id edit req status changed "+str(obj.id))
+        data = {
+            'status': True
+        }
+        return JsonResponse(data)
+
+
+    else:
+        obj=Pending_orders.objects.get(id=status_id)
+        obj.approved=2
+        obj.save()
+
+        order_declined=Orders.objects.get(id__exact=obj.orderno_id)
+        status = OrderStatus.objects.get(abbv="DECL")
+        order_declined.status=status
+        order_declined.save()
+
+        # print("order id "+str(order_declined.id)+" declined")
+        print('in false')
+
+        data = {
+            'status': False
+        }
+        return JsonResponse(data)

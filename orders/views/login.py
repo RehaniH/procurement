@@ -1,6 +1,6 @@
 """The class for logging to server"""
 import logging
-
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.shortcuts import render  # , redirect
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import ListView
@@ -26,6 +26,7 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from orders.models import Employee, Rule1, Rule2, Rule3, Pending_orders, Item
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,7 +48,7 @@ def login_web(request):
 
         if(user_group == "Manager" or user_group == "Supervisor"):
             # replace this with your dashboard
-            return render(request, 'orders/register.html')
+            return redirect('manage')
         elif(user_group == "Accounting Staff"):
             return render(request, 'accounting/dashboard.html')
         else:
