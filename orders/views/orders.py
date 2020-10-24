@@ -92,11 +92,10 @@ def update_purchase_order(request, request_id, order_id ):
         item_price_id = request.POST.get('item_price_id', None)
         order_request = RequestOrders.objects.get(pk=request_id)
         active = True
-        
         item_price = ItemPrices.objects.get(pk=item_price_id)
         supplier = item_price.supplier
-        
         price = item_price.price
+        status = OrderStatus.objects.get(abbv="PEND")
 
         #saving newly added information to existing order object
         order = Orders.objects.get(pk=order_id)
