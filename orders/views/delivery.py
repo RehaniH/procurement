@@ -7,6 +7,7 @@ from django.views.generic import ListView
 from django.views.generic import View
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 
 from django.shortcuts import render
 # andrew
@@ -130,7 +131,12 @@ def DeliveryLog_list(request):
         DeliveryLog_data = JSONParser().parse(request)
         print(DeliveryLog_data['purchased_orders'])
         id = DeliveryLog_data['purchased_orders']
+        id_val=Orders.objects.get(pk=id)
+        print(id_val)
         order = Orders.objects.values_list('item',flat=True).get(pk=id)
+        print(order,"ss")
+        item1=Item.objects.get(pk=order)
+        print(item1)
         stock = Stock.objects.get(item_id=order)
         
         stock.quantity += DeliveryLog_data['quantity']
@@ -144,12 +150,19 @@ def DeliveryLog_list(request):
 
 
         print(stock)
+        obj=DeliveryLog.objects.create(
+                item=item1,
+                purchased_orders=id_val,
+                quantity=DeliveryLog_data['quantity'],
+                date=DeliveryLog_data['date']
+
+            )
 
 
         Dellog_serializer = DeliveryLogSerializer(data=DeliveryLog_data)
         #order id -> order record-> item(4)=stock.item(4)
         if Dellog_serializer.is_valid():
-            Dellog_serializer.save()
+            # Dellog_serializer.save()
             # print(Dellog_serializer.data)
             # dellog_item=Dellog_serializer.data['item']
             # Update_Stock=Stock.objects.filter(item_id=dellog_item)
@@ -199,7 +212,7 @@ def Stock_list(request):
         quantityy=stock_data['quantity']
         print(quantityy)
         quantity_typee=stock_data['quantity_type']
-        reorder_levell=stock_data['reorder_level']
+        # reorder_levell=stock_data['reorder_level']
         itemm = Item.objects.get(name=itemid)
         print(itemm)
         siteobj=Site.objects.get(name__iexact='galle')
@@ -209,7 +222,7 @@ def Stock_list(request):
                 item=itemm,
                 quantity=quantityy,
                 quantity_type=quantity_typee,
-                reorder_level=reorder_levell,
+                # reorder_level=reorder_levell,
                 site=siteobj,
             )
         req_serializer = StockSerializer(data=stock_data)
@@ -220,9 +233,9 @@ def Stock_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def Stock_detail(request, pk):
+def Stock_detail(request):
     try: 
-        Stocks = Stock.objects.get(pk=pk) 
+        Stocks = Stock.objects.all() 
     except Stock.DoesNotExist: 
         return JsonResponse({'message': 'The stock does not exist'}, status=status.HTTP_404_NOT_FOUND) 
  
@@ -234,18 +247,23 @@ def Stock_detail(request, pk):
         Stock_data = JSONParser().parse(request) 
         print(Stock_data)
         qnty=Stock_data['quantity']
+        item1=Stock_data['item']
+        itemobj=Item.objects.get(name__iexact=item1)
+        print(itemobj)
+
         print(qnty)
-        obj1=Stock.objects.get(id=pk)
+
+        obj1=Stock.objects.get(item=itemobj)
         obj1.quantity=qnty
         obj1.save()      
         
-        print(Stock_data['item'])
-        Item_id=Stock_data['item']
-        orderobj=Item.objects.get(pk=Item_id)
+        # print(Stock_data['item'])
+        Item_id=obj1.item
+        orderobj=Item.objects.get(name=Item_id)
         statusobj=OrderStatus.objects.get(status__iexact='reorder item')
         
         print(orderobj)
-        if(qnty<=Stocks.reorder_level):
+        if(qnty<=obj1.reorder_level):
             obj=RequestOrders.objects.create(
                 item=orderobj,
                 status=statusobj,
@@ -260,15 +278,24 @@ def Stock_detail(request, pk):
             return JsonResponse(Stock_serializer.data) 
         return JsonResponse(Stock_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
  
-    elif request.method == 'DELETE': 
-        Stocks.delete() 
-        return JsonResponse({'message': 'Stock was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-
+  
 #Stock
 @api_view(['GET', 'POST', 'DELETE'])
 def Order_list(request):
     if request.method == 'GET':
         Stocks=Orders.objects.all()
+        # for x in Stocks:
+        #     Item1=x.item
+        #     order_id=Orders.objects.get(pk=x.id)
+        #     print(Item1)
+        #     obj=DeliveryLog.objects.create(
+        #         item=Item1,
+        #         purchased_orders=order_id
+    
+        #      )
+        
+        
+        
         Order_Serializer=OrderSerializer(Stocks,many=True)
         return JsonResponse(Order_Serializer.data,safe=False)
 
@@ -287,7 +314,7 @@ def Order_detail(request, pk):
         Order_data = JSONParser().parse(request) 
         print(Order_data)
         quantity1=Order_data['quantity']
-        statusobj=OrderStatus.objects.get(status__iexact='update pending')
+        statusobj=OrderStatus.objects.get(abbv__iexact='RQEDI')
         obj2=Orders.objects.get(id=pk)
         obj2.quantity=quantity1
         obj2.status=statusobj
@@ -300,7 +327,7 @@ def Order_detail(request, pk):
         return JsonResponse(Order_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
  
     elif request.method == 'DELETE':
-        statusobj=OrderStatus.objects.get(status__iexact='delete pending')
+        statusobj=OrderStatus.objects.get(abbv__iexact='RQDEL')
         obj2=Orders.objects.get(id=pk)
         obj2.status=statusobj
         obj2.save() 
@@ -308,9 +335,31 @@ def Order_detail(request, pk):
         return JsonResponse({'message': 'Stock was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
  
 def Item_list(request):
-    if(request.method)=='GET':
-        Item1=Item.objects.values('name')
-        Item2=list(Item1)
+    # if(request.method)=='GET':
+        name=Item.objects.values_list('name',flat=True)
+        Item2=list(name)
         print(Item2)
-        Item_Serializer=ItemSerializer(Item1,many=True)
-        return JsonResponse(Item_Serializer.data,safe=False)
+        # Item_Serializer=ItemSerializer(name,many=True)
+        # return JsonResponse(Item_Serializer.data,safe=False)
+        return JsonResponse(Item2,safe=False) 
+
+def Reorder_level(request,pk):
+    try: 
+        orders = Stock.objects.get(pk=pk) 
+    except Stock.DoesNotExist: 
+        return JsonResponse({'message': 'The stock does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+    
+    if request.method == 'PUT': 
+        reorder_level_data = JSONParser().parse(request) 
+        print(reorder_level_data)
+        re_order=reorder_level_data['reorder_level']
+        obj3=Stock.objects.get(id=pk)
+        obj3.reorder_level=re_order
+        obj3.save()
+
+        Stock_serializer = StockSerializer(orders, data=reorder_level_data) 
+        if Stock_serializer.is_valid(): 
+            # Stock_serializer.save() 
+            return JsonResponse(Stock_serializer.data) 
+        return JsonResponse(Stock_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+ 
